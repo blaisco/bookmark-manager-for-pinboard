@@ -1,6 +1,7 @@
 var PinboardApi = function(apiToken) {
   this.HOST = "/p";
-  this.UPDATE_PATH = "/posts/update";
+  this.POSTS_UPDATE_PATH = "/posts/update";
+  this.TAGS_GET_PATH = "/tags/get";
 
   this.apiToken = apiToken;
 
@@ -33,8 +34,12 @@ var PinboardApi = function(apiToken) {
     });
   }
 
-  this.posts_update = function(callback) {
-    this.callApi(this.UPDATE_PATH, {}, callback);
+  this.postsUpdate = function(callback) {
+    this.callApi(this.POSTS_UPDATE_PATH, {}, callback);
+  }
+
+  this.tagsGet = function(callback) {
+    this.callApi(this.TAGS_GET_PATH, {}, callback);
   }
 
 };

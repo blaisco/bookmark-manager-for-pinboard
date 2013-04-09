@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <title>Labels for Pinboard</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -29,27 +29,38 @@
   </div>
 
   <script type="text/template" id="api-token-tmpl">
+    <p>Go here to get your API token: <a href="https://www.pinboard.in/settings/password">https://www.pinboard.in/settings/password</a></p>
     <form>
-      <div class="row">
-        <div class="two columns">
-        <label class="right inline" for="api-token">API Token</label>
-      </div>
-      <div class="four columns">
-        <input id="api-token" type="text" class="span4" placeholder="username:0A1B2C3D4E5F6A7B8C9D">
-      </div>
-      <div class="one columns end">
-        <button type="submit" class="small button postfix">Go</button>
+      <div class="row collapse">
+        <div class="small-1 columns">
+          <label class=" inline" for="api-token">API Token</label>
+        </div>
+        <div class="small-4 columns">
+          <input id="api-token" type="text" class="span4" placeholder="username:0A1B2C3D4E5F6A7B8C9D">
+        </div>
+        <div class="small-1 columns end">
+          <button type="submit" class="button postfix">Go</button>
+        </div>
       </div>
     </form>
   </script>
 
   <script type="text/template" id="app-tmpl">
-
+    <div class="row">
+      <div class="small-4 columns">
+        <div id="labels">rawr</div>
+        <div id="tags"></div>
+      </div>
+      <div class="small-8 columns">
+        <div id="bookmarks">rawr</div>
+      </div>
+    </div>
   </script>
   
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/0.9.10/backbone-min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/backbone-relational/0.7.0/backbone-relational.min.js"></script>
   <script src="/js/pinboard-api.js"></script>
   <script src="/js/models.js"></script>
   <script src="/js/views.js"></script>
@@ -59,16 +70,3 @@
 
 
 
-<!--
-    <div id="main" class="container">
-    <div class="row">
-      <div class="span4">
-        <div id="labels"></div>
-        <div id="tags"></div>
-      </div>
-      <div class="span8">
-        <div id="bookmarks"></div>
-      </div>
-    </div>
-  </div>
--->

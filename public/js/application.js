@@ -30,7 +30,7 @@ var start = function() {
   //localStorage.removeItem("apiToken");
   var apiToken = localStorage["apiToken"];
 
-  if(apiToken) {
+  if(apiToken != undefined) {
     var appView = new AppView();
     showView(appView);
   } else {
@@ -64,29 +64,29 @@ var start = function() {
   tag: .~Alpha/Bravo/Charlie
 */
 
-function createTree(labels) {
-  /*var test = [
-      {title: "Item 1"},
-      {title: "Folder 2", isFolder: true, key: "folder2",
-        children: [
-          {title: "Sub-item 2.1"},
-          {title: "Sub-item 2.2"}
-        ]
-      },
-      {title: "Item 3"}
-    ];
-  console.log(test);*/
+// function createTree(labels) {
+//   /*var test = [
+//       {title: "Item 1"},
+//       {title: "Folder 2", isFolder: true, key: "folder2",
+//         children: [
+//           {title: "Sub-item 2.1"},
+//           {title: "Sub-item 2.2"}
+//         ]
+//       },
+//       {title: "Item 3"}
+//     ];
+//   console.log(test);*/
 
-  $("#labels").dynatree({
-    onActivate: function(node) {
-      // A DynaTreeNode object is passed to the activation handler
-      // Note: we also get this event, if persistence is on, and the page is reloaded.
-      //console.log(node.data.tag);
-      loadBookmarks(node.data.tag);
-    },
-    children: labels
-  });
-}
+//   $("#labels").dynatree({
+//     onActivate: function(node) {
+//       // A DynaTreeNode object is passed to the activation handler
+//       // Note: we also get this event, if persistence is on, and the page is reloaded.
+//       //console.log(node.data.tag);
+//       loadBookmarks(node.data.tag);
+//     },
+//     children: labels
+//   });
+// }
 
 function loadBookmarks(tag) {
   $("#bookmarks").empty();
