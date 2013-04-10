@@ -58,12 +58,12 @@
   </script>
 
   <script type="text/template" id="label-tmpl">
-    <li class="<%= label.isPrivate ? 'private' : '' %>"><%= label.title %></li>
-    <% if(label.children.length) { %><ul><% } %>
-    <% _.each(label.children, function(child) { %>
+    <li class="<%= label.isPrivate() ? 'private' : '' %>"><%= label.getTitle() %></li>
+    <% if(label.get("children").length) { %><ul><% } %>
+    <% label.get("children").each(function(child) { %>
       <%= templateFn({"label": child, "templateFn": templateFn}) %>
     <% }); %>
-    <% if(label.children.length) { %></ul><% } %>
+    <% if(label.get("children").length) { %></ul><% } %>
   </script>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>

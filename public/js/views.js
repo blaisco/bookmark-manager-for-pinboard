@@ -99,33 +99,32 @@ var AppView = Backbone.View.extend({
     });
 
     // TODO: might need to be undefined instead of false for parent
-    var labels = tagCollection.filter(function(tag){ return tag.get("isLabel") == true && tag.get("parent") == undefined; });
-
+    var labels = tagCollection.filter(function(tag){ return tag.isLabel() == true && tag.get("parent") == undefined; });
 
     var templateFn = _.template( $("#label-tmpl").html() );
     var html = "";
 
     // Loop through each of our parent labels and recursively create a tree for it
     _.each(labels, function(label) {
-      html += templateFn({"label": label.toJSON(), "templateFn": templateFn});
+      html += templateFn({"label": label, "templateFn": templateFn});
     });
     this.$('#labels').html( html );
 
-    //console.log( JSON.stringify(tagCollection) );
+    console.log( JSON.stringify(tagCollection) );
   },
 
   findOrCreateTag: function(tagCollection, tagString, count) {
     var token = Tag.tokenify(tagString);
-    var tag = tagCollection.findWhere({"token": token});
+    var tag = tagCollection.find(function(t){ return t.getToken() == token });
     if(tag) {
       // if our tagString is not private but the actual tag is private...
-      if(!Tag.isPrivate(tagString) && tag.get("isPrivate")) {
-        // set the tag to be public
+      if(!Tag.isPrivate(tagString) && tag.isPrivate()) {
+        // ...set the tag to be public
         tag.set({"tag": Tag.deprivatize(tagString)});
       }
     } else {
       // only create a tag if it doesn't already exist in the collection
-      var parent = null;
+      var parent = undefined;
       // if the tag contains a slash, then we'll need to find/create it's parent
       if (tagString.indexOf("/") >= 0) {
         // find the parent by finding a tag with everything prior to the last slash
@@ -134,11 +133,13 @@ var AppView = Backbone.View.extend({
         var parentTag = tagString.slice(0, tagString.length-indexOfSlash-1);
         tagCollection = this.findOrCreateTag(tagCollection, parentTag, 0);
         // tag should have been created. now find it in the collection.
-        parent = tagCollection.findWhere({"token": Tag.tokenify(parentTag)});
+        parent = tagCollection.find(function(t){ return t.getToken() == Tag.tokenify(parentTag)});
+        //console.log(parent ? parent.get("tag") : parent);
       }
       // make sure that recursive-creating of parents doesn't mark them as private
-      var tag = new Tag({ tag: tagString, bookmarkCount: count, parent: parent });
+      var tag = new Tag({ "tag": tagString, "bookmarkCount": count, "parent": parent });
       tagCollection.add(tag);
+      
     }
     return tagCollection;
   }
