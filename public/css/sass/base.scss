@@ -1,0 +1,9 @@
+ul#labels { 
+  overflow: hidden;
+  white-space: nowrap;
+  
+  ul {
+    padding-left: 20px;
+    margin-bottom: 0;
+  }
+}

@@ -1,4 +1,2 @@
-ul#labels ul {
-  padding-left: 20px;
-  margin-bottom: 0;
-}
+ul#labels { overflow: hidden; white-space: nowrap; }
+ul#labels ul { padding-left: 20px; margin-bottom: 0; }

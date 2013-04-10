@@ -25,6 +25,8 @@ Tag = Backbone.RelationalModel.extend({
     this.on("change:tag", this._setupTag, this);
   },
 
+  // TODO: All of the following stuff can probably just be functions instead of attributes to be set.
+
   /** 
    * Set all of the derived values of a tag: token, title, isPrivate, isLabel
    */
