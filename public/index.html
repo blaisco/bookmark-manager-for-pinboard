@@ -58,7 +58,7 @@
   </script>
 
   <script type="text/template" id="label-tmpl">
-    <li><%= label.title %></li>
+    <li class="<%= label.isPrivate ? 'private' : '' %>"><%= label.title %></li>
     <% if(label.children.length) { %><ul><% } %>
     <% _.each(label.children, function(child) { %>
       <%= templateFn({"label": child, "templateFn": templateFn}) %>

@@ -114,21 +114,30 @@ var AppView = Backbone.View.extend({
     //console.log( JSON.stringify(tagCollection) );
   },
 
-  findOrCreateTag: function(tagCollection, tag, count) {
-    // only create a tag if it doesn't already exist in the collection
-    if(! tagCollection.findWhere({"token": Tag.tokenify(tag)})) {
+  findOrCreateTag: function(tagCollection, tagString, count) {
+    var token = Tag.tokenify(tagString);
+    var tag = tagCollection.findWhere({"token": token});
+    if(tag) {
+      // if our tagString is not private but the actual tag is private...
+      if(!Tag.isPrivate(tagString) && tag.get("isPrivate")) {
+        // set the tag to be public
+        tag.set({"tag": Tag.deprivatize(tagString)});
+      }
+    } else {
+      // only create a tag if it doesn't already exist in the collection
       var parent = null;
       // if the tag contains a slash, then we'll need to find/create it's parent
-      if (tag.indexOf("/") >= 0) {
+      if (tagString.indexOf("/") >= 0) {
         // find the parent by finding a tag with everything prior to the last slash
-        var reversedTag = tag.split("").reverse().join("");
+        var reversedTag = tagString.split("").reverse().join("");
         var indexOfSlash = reversedTag.indexOf('/');
-        var parentTag = tag.slice(0, tag.length-indexOfSlash-1);
+        var parentTag = tagString.slice(0, tagString.length-indexOfSlash-1);
         tagCollection = this.findOrCreateTag(tagCollection, parentTag, 0);
         // tag should have been created. now find it in the collection.
         parent = tagCollection.findWhere({"token": Tag.tokenify(parentTag)});
       }
-      var tag = new Tag({ tag: tag, bookmarkCount: count, parent: parent });
+      // make sure that recursive-creating of parents doesn't mark them as private
+      var tag = new Tag({ tag: tagString, bookmarkCount: count, parent: parent });
       tagCollection.add(tag);
     }
     return tagCollection;

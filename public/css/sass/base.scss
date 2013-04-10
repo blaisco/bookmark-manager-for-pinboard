@@ -6,4 +6,12 @@ ul#labels {
     padding-left: 20px;
     margin-bottom: 0;
   }
+
+  li {
+    list-style-type: none;
+
+    &.private {
+      color: #666;
+    }
+  }
 }

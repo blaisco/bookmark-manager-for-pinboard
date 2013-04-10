@@ -110,6 +110,13 @@ Tag.isPrivate = function(tag) {
   return tag[0] === PRIVATE_CHAR;
 };
 
+Tag.deprivatize = function(tag) {
+  if(Tag.isPrivate(tag)) {
+    tag = tag.slice(1);
+  }
+  return tag;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 TagCollection = Backbone.Collection.extend({
