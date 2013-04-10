@@ -2,9 +2,6 @@
  * All labels are tags. Not all tags are labels.
  */
 Tag = Backbone.RelationalModel.extend({
-  LABEL_CHAR: "~", // character used to identify labels
-  PRIVATE_CHAR: ".", // character used to identify private tags/labels
-
   relations: [{
     type: 'HasMany',
     key: 'children',
@@ -88,6 +85,38 @@ Tag = Backbone.RelationalModel.extend({
   
 });
 
+////////////////////////////////////////////////////////////////////////////////
+
+Tag.LABEL_CHAR = "~"; // character used to identify labels
+Tag.PRIVATE_CHAR = "."; // character used to identify private tags/labels
+
+Tag.tokenify = function(tag) {
+  if(Tag.isPrivate(tag)) {
+    tag = tag.slice(1);
+  }
+  if(Tag.isLabel(tag)) {
+    tag = tag.slice(1);
+  }
+  return tag;
+};
+
+Tag.isLabel = function(tag) {
+  return tag[0] === Tag.LABEL_CHAR || (isPrivate(tag) && tag[1] === LABEL_CHAR);
+};
+
+Tag.isPrivate = function(tag) {
+  return tag[0] === PRIVATE_CHAR;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+
 TagCollection = Backbone.Collection.extend({
-  model: Tag
+  model: Tag,
+
+  /**
+   * Sort by the tag text (same sort order as Pinboard provides it to us)
+   */
+  comparator: function(tag) {
+    return tag.get("tag");
+  }
 });

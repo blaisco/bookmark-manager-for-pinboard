@@ -70,7 +70,6 @@ var AppView = Backbone.View.extend({
   initialize: function() {
     var self = this;
     this.api = new PinboardApi(localStorage["apiToken"]);
-
     this.api.tagsGet(this.handleTagsGet(this));
   },
 
@@ -92,37 +91,47 @@ var AppView = Backbone.View.extend({
   },
 
   createTree: function(tags) {
-
+    var self = this;
     var tagCollection = new TagCollection();
 
     $.each(tags, function(tag, count) {
-      var tag = new Tag({ tag: tag, bookmarkCount: count });
-      // TODO: Sweet, we're creating tags. What about finding/creating parents?
-      tagCollection.add(tag);
+      tagCollection = self.findOrCreateTag(tagCollection, tag, count);      
     });
 
-    console.log( JSON.stringify(tagCollection) );
+    // TODO: might need to be undefined instead of false for parent
+    var labels = tagCollection.filter(function(tag){ return tag.get("isLabel") == true && tag.get("parent") == undefined; });
 
-    // var labels = new TagCollection();
 
-    // var label1 = new Tag({ name: "TEST" });
-    // labels.add(label1);
+    var templateFn = _.template( $("#label-tmpl").html() );
+    var html = "";
 
-    // var parent = labels.findWhere({name: "TEST"});
-    // var label2 = new Tag({ name: "TEST2", parent: parent });
-    // labels.add(label2);
+    // Loop through each of our parent labels and recursively create a tree for it
+    _.each(labels, function(label) {
+      html += templateFn({"label": label.toJSON(), "templateFn": templateFn});
+    });
+    this.$('#labels').html( html );
 
-    // //var string = JSON.stringify(label1);
-    // //console.log( string );
+    //console.log( JSON.stringify(tagCollection) );
+  },
 
-    // //var newLabel = new Label(JSON.parse(string));
-    // //console.log( JSON.stringify(newLabel) );
-
-    // var string = JSON.stringify(labels);
-    // console.log( string );
-
-    // var newLabels = new TagCollection( JSON.parse(string) );
-    // console.log( JSON.stringify(newLabels) );
+  findOrCreateTag: function(tagCollection, tag, count) {
+    // only create a tag if it doesn't already exist in the collection
+    if(! tagCollection.findWhere({"token": Tag.tokenify(tag)})) {
+      var parent = null;
+      // if the tag contains a slash, then we'll need to find/create it's parent
+      if (tag.indexOf("/") >= 0) {
+        // find the parent by finding a tag with everything prior to the last slash
+        var reversedTag = tag.split("").reverse().join("");
+        var indexOfSlash = reversedTag.indexOf('/');
+        var parentTag = tag.slice(0, tag.length-indexOfSlash-1);
+        tagCollection = this.findOrCreateTag(tagCollection, parentTag, 0);
+        // tag should have been created. now find it in the collection.
+        parent = tagCollection.findWhere({"token": Tag.tokenify(parentTag)});
+      }
+      var tag = new Tag({ tag: tag, bookmarkCount: count, parent: parent });
+      tagCollection.add(tag);
+    }
+    return tagCollection;
   }
 });
 

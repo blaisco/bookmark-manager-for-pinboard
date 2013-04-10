@@ -48,7 +48,7 @@
   <script type="text/template" id="app-tmpl">
     <div class="row">
       <div class="small-4 columns">
-        <div id="labels">rawr</div>
+        <ul id="labels">rawr</ul>
         <div id="tags"></div>
       </div>
       <div class="small-8 columns">
@@ -56,7 +56,16 @@
       </div>
     </div>
   </script>
-  
+
+  <script type="text/template" id="label-tmpl">
+    <li><%= label.title %></li>
+    <% if(label.children.length) { %><ul><% } %>
+    <% _.each(label.children, function(child) { %>
+      <%= templateFn({"label": child, "templateFn": templateFn}) %>
+    <% }); %>
+    <% if(label.children.length) { %></ul><% } %>
+  </script>
+
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
