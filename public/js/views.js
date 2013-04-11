@@ -92,56 +92,81 @@ var AppView = Backbone.View.extend({
 
   createTree: function(tags) {
     var self = this;
-    var tagCollection = new TagCollection();
+    //var labelCollection = new TagCollection();
+    var rootLabel = new Tag();
 
-    $.each(tags, function(tag, count) {
-      tagCollection = self.findOrCreateTag(tagCollection, tag, count);      
+    $.each(tags, function(tag, bookmarkCount) {
+      if(Tag.isLabel(tag)) {
+        //console.log(tag);
+        self.findOrCreateLabel(rootLabel, 0, tag, bookmarkCount);
+      }
     });
 
+    //console.log( JSON.stringify(rootLabel));
+
     // TODO: might need to be undefined instead of false for parent
-    var labels = tagCollection.filter(function(tag){ return tag.isLabel() == true && tag.get("parent") == undefined; });
+    //var labels = labelCollection.filter(function(label){ return label.get("parent") == undefined; });
 
     var templateFn = _.template( $("#label-tmpl").html() );
     var html = "";
 
     // Loop through each of our parent labels and recursively create a tree for it
-    _.each(labels, function(label) {
+    rootLabel.get("children").each(function(label) {
+      //console.log( JSON.stringify(label) );
       html += templateFn({"label": label, "templateFn": templateFn});
     });
     this.$('#labels').html( html );
 
-    console.log( JSON.stringify(tagCollection) );
+    console.log( JSON.stringify(rootLabel) );
   },
 
-  findOrCreateTag: function(tagCollection, tagString, count) {
+  /**
+   * findOrCreateLabel takes a label (parentLabel), e.g. ~Alpha/Bravo/Charlie,
+   * and recursively finds or creates labels for each part of the string. The
+   * first call would create ~Alpha, second ~Alpha/Bravo, and finally
+   * ~Alpha/Bravo/Charlie.
+   */
+  findOrCreateLabel: function(parentLabel, startPos, tagString, bookmarkCount) {
+    var originalTagString = ""; // for use in recursive calls
+    /* Find the first slash after the start position (starts at 0, startPos 
+       increases to match the indexOfSlash on each recursive call) */
+    var indexOfSlash = tagString.indexOf("/", startPos+1);
+    /* a derivedLabel means we're not working with the original parentLabel
+       and we still have some recursion to do. */
+    var derivedLabel = (indexOfSlash >= 0);
+
+    if(derivedLabel) { // more segments to process; we'll need to recurse
+      originalTagString = tagString;
+      tagString = tagString.slice(0, indexOfSlash);
+    }
+
     var token = Tag.tokenify(tagString);
-    var tag = tagCollection.find(function(t){ return t.getToken() == token });
-    if(tag) {
+    var label = parentLabel.get("children").find(function(l){ return l.getToken() == token });
+
+    if(label) { 
       // if our tagString is not private but the actual tag is private...
-      if(!Tag.isPrivate(tagString) && tag.isPrivate()) {
+      if(!Tag.isPrivate(tagString) && label.isPrivate()) {
         // ...set the tag to be public
-        tag.set({"tag": Tag.deprivatize(tagString)});
+        label.set({"tag": Tag.deprivatize(tagString)});
       }
     } else {
-      // only create a tag if it doesn't already exist in the collection
-      var parent = undefined;
-      // if the tag contains a slash, then we'll need to find/create it's parent
-      if (tagString.indexOf("/") >= 0) {
-        // find the parent by finding a tag with everything prior to the last slash
-        var reversedTag = tagString.split("").reverse().join("");
-        var indexOfSlash = reversedTag.indexOf('/');
-        var parentTag = tagString.slice(0, tagString.length-indexOfSlash-1);
-        tagCollection = this.findOrCreateTag(tagCollection, parentTag, 0);
-        // tag should have been created. now find it in the collection.
-        parent = tagCollection.find(function(t){ return t.getToken() == Tag.tokenify(parentTag)});
-        //console.log(parent ? parent.get("tag") : parent);
-      }
-      // make sure that recursive-creating of parents doesn't mark them as private
-      var tag = new Tag({ "tag": tagString, "bookmarkCount": count, "parent": parent });
-      tagCollection.add(tag);
-      
+      label = new Tag({ "tag": tagString, "bookmarkCount": (derivedLabel ? bookmarkCount : 0), "parent": parentLabel });
     }
-    return tagCollection;
+
+    if(derivedLabel) {
+      this.findOrCreateLabel(label, indexOfSlash, originalTagString, bookmarkCount);
+    }
+
+    //console.log(JSON.stringify(label.get("tag")));
+    return label;
   }
 });
 
+
+
+
+/**
+ * Potential bugs:
+ * Tag with just a tilde ~
+ * Tag with multiple slashes with no chars in between (~Alpha/////Bravo)
+ */
