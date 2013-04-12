@@ -67,6 +67,10 @@ var AppView = Backbone.View.extend({
 
   template: _.template($('#app-tmpl').html()),
 
+  events: {
+    "click a.tag": "loadBookmarks",
+  },
+
   initialize: function() {
     var self = this;
     this.api = new PinboardApi(localStorage["apiToken"]);
@@ -79,86 +83,61 @@ var AppView = Backbone.View.extend({
     return this;
   },
 
+  /**
+   * On success, `handleTagsGet` builds a tree view containing labels from our 
+   * array of tags (`data`). On failure, displays an error.
+   */
   handleTagsGet: function(self) {
     return function(success, data) {
 
       if(success) {
-        self.createTree(data);
+        // take our array of tags and build out a tree for the labels
+        var rootLabel = Tag.createLabelTree(data);
+
+        var templateFn = _.template( $("#label-tmpl").html() );
+        var html = "";
+
+        /* Loop through each of our root label's children and recursively build out
+           the view for them, their children, their children's children, etc. */
+        rootLabel.getChildren().each(function(label) {
+          html += templateFn({"label": label, "templateFn": templateFn});
+        });
+        this.$('#labels').html( html );
+
+        // console.log( JSON.stringify(rootLabel) );
       } else {
         showError("Unable to fetch tags.");
       }
     }
   },
 
-  createTree: function(tags) {
-    var self = this;
-    //var labelCollection = new TagCollection();
-    var rootLabel = new Tag();
+  loadBookmarks: function(event) {
+    event.preventDefault();
 
-    $.each(tags, function(tag, bookmarkCount) {
-      if(Tag.isLabel(tag)) {
-        //console.log(tag);
-        self.findOrCreateLabel(rootLabel, 0, tag, bookmarkCount);
-      }
-    });
+    var $label = $(event.target);
+    var tag = $label.data("tag");
+    var bookmarkCount = parseInt($label.data("count"));
 
-    //console.log( JSON.stringify(rootLabel));
-
-    // TODO: might need to be undefined instead of false for parent
-    //var labels = labelCollection.filter(function(label){ return label.get("parent") == undefined; });
-
-    var templateFn = _.template( $("#label-tmpl").html() );
-    var html = "";
-
-    // Loop through each of our parent labels and recursively create a tree for it
-    rootLabel.get("children").each(function(label) {
-      //console.log( JSON.stringify(label) );
-      html += templateFn({"label": label, "templateFn": templateFn});
-    });
-    this.$('#labels').html( html );
-
-    console.log( JSON.stringify(rootLabel) );
+    if(bookmarkCount > 0) {
+      this.api.postsAll(tag, this.populateBookmarks(this));
+    } else {
+      $("#bookmarks").html("There are no bookmarks for this label.");
+    }
+    // console.log("=> " + tag + " " + bookmarkCount);
   },
 
-  /**
-   * findOrCreateLabel takes a label (parentLabel), e.g. ~Alpha/Bravo/Charlie,
-   * and recursively finds or creates labels for each part of the string. The
-   * first call would create ~Alpha, second ~Alpha/Bravo, and finally
-   * ~Alpha/Bravo/Charlie.
-   */
-  findOrCreateLabel: function(parentLabel, startPos, tagString, bookmarkCount) {
-    var originalTagString = ""; // for use in recursive calls
-    /* Find the first slash after the start position (starts at 0, startPos 
-       increases to match the indexOfSlash on each recursive call) */
-    var indexOfSlash = tagString.indexOf("/", startPos+1);
-    /* a derivedLabel means we're not working with the original parentLabel
-       and we still have some recursion to do. */
-    var derivedLabel = (indexOfSlash >= 0);
-
-    if(derivedLabel) { // more segments to process; we'll need to recurse
-      originalTagString = tagString;
-      tagString = tagString.slice(0, indexOfSlash);
-    }
-
-    var token = Tag.tokenify(tagString);
-    var label = parentLabel.get("children").find(function(l){ return l.getToken() == token });
-
-    if(label) { 
-      // if our tagString is not private but the actual tag is private...
-      if(!Tag.isPrivate(tagString) && label.isPrivate()) {
-        // ...set the tag to be public
-        label.set({"tag": Tag.deprivatize(tagString)});
+  populateBookmarks: function(self) {
+    return function(success, data) {
+      if(success) {
+        // $.each(data, function(index, bookmark) {
+        //   console.log(bookmark);
+        // });
+        var template = _.template( $("#bookmarks-tmpl").html(), {"bookmarks": data} );
+        this.$('#bookmarks').empty().html( template );
+      } else {
+        showError("Unable to fetch bookmarks.");
       }
-    } else {
-      label = new Tag({ "tag": tagString, "bookmarkCount": (derivedLabel ? bookmarkCount : 0), "parent": parentLabel });
     }
-
-    if(derivedLabel) {
-      this.findOrCreateLabel(label, indexOfSlash, originalTagString, bookmarkCount);
-    }
-
-    //console.log(JSON.stringify(label.get("tag")));
-    return label;
   }
 });
 

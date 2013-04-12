@@ -7,7 +7,7 @@
   <link href="/css/base.css" media="all" rel="stylesheet" type="text/css" />
 </head>
 <body>
-  <div id="container" class="row">
+  <div id="container">
     <div id="error" class="alert-box alert center" style="display: none;"></div>
     <div id="main"></div>
     <div id="unsupported" style="display: none;">
@@ -46,25 +46,26 @@
   </script>
 
   <script type="text/template" id="app-tmpl">
-    <div class="row">
-      <div class="small-4 columns">
-        <ul id="labels">rawr</ul>
-        <div id="tags"></div>
-      </div>
-      <div class="small-8 columns">
-        <div id="bookmarks">rawr</div>
-      </div>
-    </div>
+    <ul id="labels">rawr</ul>
+    <ul id="tags"></ul>
+    <ul id="bookmarks">rawr</ul>
   </script>
 
   <script type="text/template" id="label-tmpl">
-    <li class="<%= label.isPrivate() ? 'private' : '' %>"><%= label.getTitle() %></li>
-    <% if(label.get("children").length) { %><ul><% } %>
-    <% label.get("children").each(function(child) { %>
+    <li><a href="#" class="tag <%= label.isPrivate() ? 'private' : '' %>" data-tag="<%= label.getTag() %>" data-count="<%= label.getBookmarkCount() %>"><%= label.getTitle() %></a></li>
+    <% if(label.getChildren().length) { %><ul><% } %>
+    <% label.getChildren().each(function(child) { %>
       <%= templateFn({"label": child, "templateFn": templateFn}) %>
     <% }); %>
-    <% if(label.get("children").length) { %></ul><% } %>
+    <% if(label.getChildren().length) { %></ul><% } %>
   </script>
+
+  <script type="text/template" id="bookmarks-tmpl">
+    <% _.each(bookmarks, function(bookmark) { %>
+      <li class="bookmark <%= bookmark.shared === 'yes' ? '' : 'private' %>"><a href="<%= bookmark.href %>"><span class="description"><%= bookmark.description %></span> <span class="url"><%= bookmark.href %></span></a></li>
+    <% }); %>
+  </script>
+
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>

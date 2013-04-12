@@ -1,6 +1,19 @@
-ul#labels { 
+body, html {
+  height: 100%;
   overflow: hidden;
+}
+
+#container, #main {
+  height: 100%;
+  overflow: hidden;
+}
+
+ul#labels { 
+  overflow: auto;
   white-space: nowrap;
+  float: left;
+  height: 100%;
+  width: 330px;
   
   ul {
     padding-left: 20px;
@@ -10,8 +23,28 @@ ul#labels {
   li {
     list-style-type: none;
 
-    &.private {
-      color: #666;
+    a.private {
+      color: #999;
+    }
+  }
+}
+
+#main > ul {
+  margin-bottom: 0;
+}
+
+ul#bookmarks {
+  overflow-x: hidden;
+  overflow-y: auto;
+  white-space: nowrap;
+  margin-left: 340px;
+  height: 100%;
+
+  li {
+    list-style-type: none;
+
+    a.private {
+      color: #999;
     }
   }
 }

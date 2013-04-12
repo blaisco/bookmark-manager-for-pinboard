@@ -21,8 +21,20 @@ Tag = Backbone.RelationalModel.extend({
     this.on("change:tag", this._setupTag, this);
   },
 
+  getTag: function() {
+    return this.get("tag");
+  },
+
+  getBookmarkCount: function() {
+    return this.get("bookmarkCount");
+  },
+
+  getChildren: function() {
+    return this.get("children");
+  },
+
   getToken: function() {
-    var token = this.get("tag");
+    var token = this.getTag();
     if(this.isPrivate()) {
       token = token.slice(1);
     }
@@ -43,46 +55,12 @@ Tag = Backbone.RelationalModel.extend({
   },
 
   isPrivate: function() {
-    return Tag.isPrivate(this.get("tag"));
+    return Tag.isPrivate(this.getTag());
   },
 
   isLabel: function() {
-    return Tag.isLabel(this.get("tag"));
-  },
-
-  // TODO: All of the following stuff can probably just be functions instead of attributes to be set.
-
-  // /** 
-  //  * Set all of the derived values of a tag: token, title, isPrivate, isLabel
-  //  */
-  // _setupTag: function(self) {
-  //   var tag = self.get("tag");
-  //   self._setIsPrivate(tag);
-  //   self._setIsLabel(tag);
-  //   // only set token and title if this is a label
-  //   // if(self.get("isLabel")) {
-  //   //   self._setToken(tag);
-  //   //   var token = self.get("token");
-  //   //   //self._setTitle(token);
-  //   // }
-  // },
-
-  // *
-  //  * Tag is private if the first character is a . 
-   
-  // _setIsPrivate: function(tag) {
-  //   var isPrivate = tag[0] === PRIVATE_CHAR;
-  //   this.set("isPrivate", isPrivate);
-  // },
-
-  // /**
-  //  * Tag is a label if the first char is a ~ OR if isPrivate and second 
-  //  * character is a ~
-  //  */ 
-  // _setIsLabel: function(tag) {
-  //   var isLabel = tag[0] === LABEL_CHAR || (this.get("isPrivate") && tag[1] === LABEL_CHAR);
-  //   this.set("isLabel", isLabel);
-  // },
+    return Tag.isLabel(this.getTag());
+  }
   
 });
 
@@ -92,7 +70,7 @@ Tag.LABEL_CHAR = "~"; // character used to identify labels
 Tag.PRIVATE_CHAR = "."; // character used to identify private tags/labels
 
 Tag.tokenify = function(tag) {
-  if(Tag.isPrivate(tag)) {
+  if(this.isPrivate(tag)) {
     tag = tag.slice(1);
   }
   if(Tag.isLabel(tag)) {
@@ -102,19 +80,88 @@ Tag.tokenify = function(tag) {
 };
 
 Tag.isLabel = function(tag) {
-  return tag[0] === Tag.LABEL_CHAR || (isPrivate(tag) && tag[1] === LABEL_CHAR);
+  return tag[0] === this.LABEL_CHAR || (isPrivate(tag) && tag[1] === this.LABEL_CHAR);
 };
 
 Tag.isPrivate = function(tag) {
-  return tag[0] === PRIVATE_CHAR;
+  return tag[0] === this.PRIVATE_CHAR;
 };
 
 Tag.deprivatize = function(tag) {
-  if(Tag.isPrivate(tag)) {
+  if(this.isPrivate(tag)) {
     tag = tag.slice(1);
   }
   return tag;
 }
+
+/** 
+ * `createLabelTree` takes an array of tag strings and builds out a tree of 
+ * labels and sublabels.
+ */
+Tag.createLabelTree = function(tagStrings) {
+  var self = this;
+  var rootLabel = new Tag();
+
+  /* Loop through all of the tag strings and add them (if they're a label) to
+     the root label, building out a tree of labels in the process. */
+  $.each(tagStrings, function(tagString, bookmarkCount) {
+    if(self.isLabel(tagString)) {
+      self.findOrCreateLabel(rootLabel, 0, tagString, bookmarkCount);
+    }
+  });
+
+  return rootLabel;
+};
+
+
+/**
+ * `findOrCreateLabel` takes a label (parentLabel), e.g. ~Alpha/Bravo/Charlie,
+ * and recursively finds or creates labels for each part of the string. The
+ * first call would create ~Alpha, second ~Alpha/Bravo, and finally
+ * ~Alpha/Bravo/Charlie.
+ */
+Tag.findOrCreateLabel = function(parentLabel, startPos, tagString, bookmarkCount) {
+  var originalTagString = ""; // for use in recursive calls
+  /* Find the first slash after the start position (starts at 0, startPos 
+     increases to match the indexOfSlash on each recursive call) */
+  var indexOfSlash = tagString.indexOf("/", startPos+1);
+  /* a derivedLabel means we're not working with the original tagString
+     and we still have some recursion to do. */
+  var derivedLabel = (indexOfSlash >= 0);
+
+  if(derivedLabel) {
+    originalTagString = tagString;
+    tagString = tagString.slice(0, indexOfSlash);
+  }
+
+  var token = Tag.tokenify(tagString);
+  var label = parentLabel.getChildren().find(function(l){ return l.getToken() == token });
+
+  if(label) { 
+    /* A parent label may have had it's bookmarkCount set to 0 by a child 
+       previously. If so, we should update it to it's real value. */
+    if(! derivedLabel) {
+      label.set({"bookmarkCount": bookmarkCount});
+    }
+
+    /* Fixing cases where we encounter a private label with children 
+       (e.g. .~Alpha/Bravo) and then we encounter a non-private parent label in 
+       the future (e.g. ~Alpha). */
+    if(! Tag.isPrivate(tagString) && label.isPrivate()) {
+      label.set({"tag": Tag.deprivatize(tagString)});
+    }
+  } else {
+    label = new Tag({ "tag": tagString, "bookmarkCount": (derivedLabel ? 0 : bookmarkCount), "parent": parentLabel });
+  }
+
+  // more segments to process; we'll need to recurse
+  if(derivedLabel) {
+    this.findOrCreateLabel(label, indexOfSlash, originalTagString, bookmarkCount);
+  }
+
+  //console.log(JSON.stringify(label.get("tag")));
+  return label;
+};
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -125,6 +172,6 @@ TagCollection = Backbone.Collection.extend({
    * Sort by the tag text (same sort order as Pinboard provides it to us)
    */
   comparator: function(tag) {
-    return tag.get("tag");
+    return tag.getTag();
   }
 });
