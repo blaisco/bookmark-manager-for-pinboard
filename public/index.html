@@ -29,14 +29,17 @@
   </div>
 
   <script type="text/template" id="api-token-tmpl">
-    <p>Go here to get your API token: <a href="https://www.pinboard.in/settings/password">https://www.pinboard.in/settings/password</a></p>
+    <h2>Labels for Pinboard</h2>
+    <p>Labels for Pinboard brings Gmail-esque labels to your Pinboard bookmarks.</p>
+    <p>In order to get started, we need your <a href="https://www.pinboard.in/settings/password">Pinboard API Token</a>. Copy and paste it into the box below.</p>
     <form>
+      <div class="error alert-box alert center" style="display: none;"></div>
       <div class="row collapse">
-        <div class="small-1 columns">
-          <label class=" inline" for="api-token">API Token</label>
+        <div  style="width: 140px" class="columns">
+          <label class="inline" for="api-token">Pinboard API Token</label>
         </div>
-        <div class="small-4 columns">
-          <input id="api-token" type="text" class="span4" placeholder="username:0A1B2C3D4E5F6A7B8C9D">
+        <div class="small-7 columns">
+          <input id="api-token" type="text" class="span6" placeholder="username:0A1B2C3D4E5F6A7B8C9D">
         </div>
         <div class="small-1 columns end">
           <button type="submit" class="button postfix">Go</button>
@@ -66,15 +69,17 @@
     <% }); %>
   </script>
 
-
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/backbone-relational/0.7.0/backbone-relational.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/4.1.2/js/foundation.min.js"></script>
   <script src="/js/pinboard-api.js"></script>
   <script src="/js/models.js"></script>
   <script src="/js/views.js"></script>
   <script src="/js/application.js"></script>
+
+  <div id="api-token-modal" class="reveal-modal large"></div>
 </body>
 </html>
 

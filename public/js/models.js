@@ -80,7 +80,7 @@ Tag.tokenify = function(tag) {
 };
 
 Tag.isLabel = function(tag) {
-  return tag[0] === this.LABEL_CHAR || (isPrivate(tag) && tag[1] === this.LABEL_CHAR);
+  return tag[0] === this.LABEL_CHAR || (this.isPrivate(tag) && tag[1] === this.LABEL_CHAR);
 };
 
 Tag.isPrivate = function(tag) {

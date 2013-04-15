@@ -8,6 +8,12 @@ body, html {
   overflow: hidden;
 }
 
+#main {
+  & > ul {
+    margin-bottom: 0;
+  }
+}
+
 ul#labels { 
   overflow: auto;
   white-space: nowrap;
@@ -27,10 +33,14 @@ ul#labels {
       color: #999;
     }
   }
-}
 
-#main > ul {
-  margin-bottom: 0;
+  a {
+    color: #333;
+
+    &:visited {
+      color: #333;
+    }
+  }
 }
 
 ul#bookmarks {
@@ -43,8 +53,21 @@ ul#bookmarks {
   li {
     list-style-type: none;
 
-    a.private {
-      color: #999;
+    a {
+      color: #11a;
+
+      &:visited {
+        color: #51a;
+      }
+
+      &.private {
+        color: #999;
+      }
+
+      .url {
+        color: #999;
+        visibility: hidden;
+      }
     }
   }
 }

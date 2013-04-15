@@ -2,13 +2,18 @@ body, html { height: 100%; overflow: hidden; }
 
 #container, #main { height: 100%; overflow: hidden; }
 
+#main > ul { margin-bottom: 0; }
+
 ul#labels { overflow: auto; white-space: nowrap; float: left; height: 100%; width: 330px; }
 ul#labels ul { padding-left: 20px; margin-bottom: 0; }
 ul#labels li { list-style-type: none; }
 ul#labels li a.private { color: #999; }
-
-#main > ul { margin-bottom: 0; }
+ul#labels a { color: #333; }
+ul#labels a:visited { color: #333; }
 
 ul#bookmarks { overflow-x: hidden; overflow-y: auto; white-space: nowrap; margin-left: 340px; height: 100%; }
 ul#bookmarks li { list-style-type: none; }
+ul#bookmarks li a { color: #11a; }
+ul#bookmarks li a:visited { color: #51a; }
 ul#bookmarks li a.private { color: #999; }
+ul#bookmarks li a .url { color: #999; visibility: hidden; }
