@@ -95,6 +95,8 @@ var AppView = Backbone.View.extend({
   template: _.template($('#app-tmpl').html()),
 
   events: {
+    "mouseleave li.bookmark": "bookmarkMouseLeave",
+    "mouseenter li.bookmark": "bookmarkMouseEnter",
     "click a.tag": "loadBookmarks",
   },
 
@@ -165,6 +167,18 @@ var AppView = Backbone.View.extend({
         showError("Unable to fetch bookmarks.");
       }
     }
+  },
+
+  bookmarkMouseEnter: function(event) {
+    if (this.$bookmark != undefined) {
+      this.$bookmark.removeClass("highlight");
+    }
+    this.$bookmark = $(event.currentTarget);
+    this.$bookmark.addClass("highlight");
+  },
+
+  bookmarkMouseLeave: function(event) {
+    this.$bookmark.removeClass("highlight");
   }
 });
 

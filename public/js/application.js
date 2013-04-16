@@ -24,7 +24,7 @@ $(function() {
  * 
  */
 var start = function() {
-  localStorage.removeItem("apiToken");
+  //localStorage.removeItem("apiToken");
   var apiToken = localStorage["apiToken"];
 
   if(apiToken != undefined) {

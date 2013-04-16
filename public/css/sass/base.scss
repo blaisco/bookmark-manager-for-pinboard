@@ -14,12 +14,24 @@ body, html {
   }
 }
 
-ul#labels { 
+ul#labels, ul#bookmarks {
   overflow: auto;
   white-space: nowrap;
-  float: left;
   height: 100%;
-  width: 330px;
+  padding: 5px;
+
+  li {
+    list-style-type: none;
+    font-size: 0.9em;
+    line-height: 1.2em;
+    border: 1px solid #FFF;
+  }
+}
+
+ul#labels { 
+  float: left;
+  width: 50%;
+  max-width: 330px;
   
   ul {
     padding-left: 20px;
@@ -27,7 +39,6 @@ ul#labels {
   }
 
   li {
-    list-style-type: none;
 
     a.private {
       color: #999;
@@ -44,14 +55,9 @@ ul#labels {
 }
 
 ul#bookmarks {
-  overflow-x: hidden;
-  overflow-y: auto;
-  white-space: nowrap;
-  margin-left: 340px;
-  height: 100%;
 
   li {
-    list-style-type: none;
+    padding: 0 4px;
 
     a {
       color: #11a;
@@ -67,6 +73,15 @@ ul#bookmarks {
       .url {
         color: #999;
         visibility: hidden;
+      }
+    }
+
+    &.highlight {
+      background-color: #F1F7FF;
+      border-color: #B6D4FC;
+
+      .url {
+        visibility: visible;
       }
     }
   }
