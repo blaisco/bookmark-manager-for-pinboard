@@ -101,15 +101,46 @@ var AppView = Backbone.View.extend({
   },
 
   initialize: function() {
-    var self = this;
+    //localStorage.removeItem("apiToken");
+    var apiToken = localStorage["apiToken"];
+
+    if(apiToken === undefined) {
+      var apiTokenView = new ApiTokenView();
+      showView(apiTokenView);
+      return;
+    }
+
     this.api = new PinboardApi(localStorage["apiToken"]);
-    this.api.tagsGet(this.handleTagsGet(this));
   },
 
   render: function() {
     this.$el.html(this.template());
+    this.api.postsUpdate(this.handlePostsUpdate(this));
     
     return this;
+  },
+
+  handlePostsUpdate: function(self) {
+    return function(success, data) {
+      if(success) {      
+        var rootLabel = localStorage["rootLabel"];
+        // no root label saved OR there's been an update since we last hit pinboard
+        if(rootLabel === undefined || localStorage["updateTime"] != data.update_time) {
+          //console.log("fetching new labels");
+          self.api.tagsGet(this.handleTagsGet(self));
+        } else {
+          //console.log("we're good!");
+          var json = JSON.parse(localStorage["rootLabel"]);
+          var rootLabel = new Tag(json);
+          self.populateLabels(rootLabel);
+        }
+      } else {
+        // this shouldn't happen, but if it does, redirect to apiTokenView
+        var apiTokenView = new ApiTokenView();
+        showView(apiTokenView);
+        return;
+      }
+    }
   },
 
   /**
@@ -122,22 +153,27 @@ var AppView = Backbone.View.extend({
       if(success) {
         // take our array of tags and build out a tree for the labels
         var rootLabel = Tag.createLabelTree(data);
-
-        var templateFn = _.template( $("#label-tmpl").html() );
-        var html = "";
-
-        /* Loop through each of our root label's children and recursively build out
-           the view for them, their children, their children's children, etc. */
-        rootLabel.getChildren().each(function(label) {
-          html += templateFn({"label": label, "templateFn": templateFn});
-        });
-        this.$('#labels').html( html );
-
-        // console.log( JSON.stringify(rootLabel) );
+        // save root label to html5 storage
+        localStorage["rootLabel"] = JSON.stringify(rootLabel);
+        // populate the label tree
+        self.populateLabels(rootLabel);
       } else {
         showError("Unable to fetch tags.");
       }
     }
+  },
+
+  populateLabels: function(rootLabel) {
+    var templateFn = _.template( $("#label-tmpl").html() );
+    var html = "";
+    /* Loop through each of our root label's children and recursively build out
+       the view for them, their children, their children's children, etc. */
+    rootLabel.getChildren().each(function(label) {
+      html += templateFn({"label": label, "templateFn": templateFn});
+    });
+    this.$('#labels').html( html );
+
+    // console.log( JSON.stringify(rootLabel) );
   },
 
   loadBookmarks: function(event) {
