@@ -95,9 +95,7 @@ var AppView = Backbone.View.extend({
   template: _.template($('#app-tmpl').html()),
 
   events: {
-    "mouseleave li.bookmark": "bookmarkMouseLeave",
-    "mouseenter li.bookmark": "bookmarkMouseEnter",
-    "click a.tag": "loadBookmarks",
+    "click a.tag": "loadBookmarks"
   },
 
   initialize: function() {
@@ -179,9 +177,14 @@ var AppView = Backbone.View.extend({
   loadBookmarks: function(event) {
     event.preventDefault();
 
-    var $label = $(event.target);
-    var tag = $label.data("tag");
-    var bookmarkCount = parseInt($label.data("count"));
+    if (this.$label != undefined) {
+      this.$label.removeClass("selected");
+    }
+    this.$label = $(event.currentTarget);
+    this.$label.addClass("selected");
+
+    var tag = this.$label.data("tag");
+    var bookmarkCount = parseInt(this.$label.data("count"));
 
     if(bookmarkCount > 0) {
       this.api.postsAll(tag, this.populateBookmarks(this));
@@ -203,18 +206,6 @@ var AppView = Backbone.View.extend({
         showError("Unable to fetch bookmarks.");
       }
     }
-  },
-
-  bookmarkMouseEnter: function(event) {
-    if (this.$bookmark != undefined) {
-      this.$bookmark.removeClass("highlight");
-    }
-    this.$bookmark = $(event.currentTarget);
-    this.$bookmark.addClass("highlight");
-  },
-
-  bookmarkMouseLeave: function(event) {
-    this.$bookmark.removeClass("highlight");
   }
 });
 

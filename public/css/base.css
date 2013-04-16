@@ -5,18 +5,32 @@ body, html { height: 100%; overflow: hidden; }
 #main > ul { margin-bottom: 0; }
 
 ul#labels, ul#bookmarks { overflow: auto; white-space: nowrap; height: 100%; padding: 5px; }
-ul#labels li, ul#bookmarks li { list-style-type: none; font-size: 0.9em; line-height: 1.2em; border: 1px solid #FFF; }
+ul#labels li, ul#bookmarks li { list-style-type: none; font-size: 14px; line-height: 18px; }
+ul#labels li a, ul#bookmarks li a { padding: 0 4px; }
 
 ul#labels { float: left; width: 50%; max-width: 330px; }
-ul#labels ul { padding-left: 20px; margin-bottom: 0; }
+ul#labels ul { margin: 0; }
+ul#labels li { /* god be with you if you have more than 10 levels of labels */ }
+ul#labels li li a { padding-left: 1em; }
+ul#labels li li li a { padding-left: 2em; }
+ul#labels li li li li a { padding-left: 3em; }
+ul#labels li li li li li a { padding-left: 4em; }
+ul#labels li li li li li li a { padding-left: 5em; }
+ul#labels li li li li li li li a { padding-left: 6em; }
+ul#labels li li li li li li li li a { padding-left: 7em; }
+ul#labels li li li li li li li li li a { padding-left: 8em; }
+ul#labels li li li li li li li li li li a { padding-left: 9em; }
+ul#labels li li li li li li li li li li li a { padding-left: 10em; }
+ul#labels li a { color: #333; display: block; border: 1px solid #FFF; }
+ul#labels li a:visited { color: #333; }
+ul#labels li a:hover { background-color: #F1F7FF; border-color: #B6D4FC; }
 ul#labels li a.private { color: #999; }
-ul#labels a { color: #333; }
-ul#labels a:visited { color: #333; }
+ul#labels li a.selected { background-color: #DEECFE; border-color: #7DA2CE; }
 
-ul#bookmarks li { padding: 0 4px; }
+ul#bookmarks li { border: 1px solid #FFF; }
 ul#bookmarks li a { color: #11a; }
 ul#bookmarks li a:visited { color: #51a; }
 ul#bookmarks li a.private { color: #999; }
-ul#bookmarks li a .url { color: #999; visibility: hidden; }
-ul#bookmarks li.highlight { background-color: #F1F7FF; border-color: #B6D4FC; }
-ul#bookmarks li.highlight .url { visibility: visible; }
+ul#bookmarks li a .url { color: #999; padding-left: 1em; visibility: hidden; }
+ul#bookmarks li:hover { background-color: #F1F7FF; border-color: #B6D4FC; }
+ul#bookmarks li:hover .url { visibility: visible; }

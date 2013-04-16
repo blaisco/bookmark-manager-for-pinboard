@@ -55,12 +55,14 @@
   </script>
 
   <script type="text/template" id="label-tmpl">
-    <li><a href="#" class="tag <%= label.isPrivate() ? 'private' : '' %>" data-tag="<%= label.getTag() %>" data-count="<%= label.getBookmarkCount() %>"><%= label.getTitle() %></a></li>
-    <% if(label.getChildren().length) { %><ul><% } %>
-    <% label.getChildren().each(function(child) { %>
-      <%= templateFn({"label": child, "templateFn": templateFn}) %>
-    <% }); %>
-    <% if(label.getChildren().length) { %></ul><% } %>
+    <li>
+      <a href="#" class="tag <%= label.isPrivate() ? 'private' : '' %>" data-tag="<%= label.getTag() %>" data-count="<%= label.getBookmarkCount() %>"><%= label.getTitle() %></a>
+      <% if(label.getChildren().length) { %><ul><% } %>
+      <% label.getChildren().each(function(child) { %>
+        <%= templateFn({"label": child, "templateFn": templateFn}) %>
+      <% }); %>
+      <% if(label.getChildren().length) { %></ul><% } %>
+    </li>
   </script>
 
   <script type="text/template" id="bookmarks-tmpl">
