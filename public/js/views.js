@@ -109,7 +109,7 @@ var AppView = Backbone.View.extend({
         // no root label saved OR there's been an update since we last hit pinboard
         if(rootLabel === undefined || localStorage["updateTime"] != data.update_time) {
           //console.log("fetching new labels");
-          self.api.tagsGet(this.handleTagsGet(self));
+          self.api.tagsGet(self.handleTagsGet(self));
         } else {
           //console.log("we're good!");
           var json = JSON.parse(localStorage["rootLabel"]);
