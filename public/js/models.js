@@ -1,7 +1,7 @@
 /** 
  * All labels are tags. Not all tags are labels.
  */
-Tag = Backbone.RelationalModel.extend({
+var Tag = Backbone.RelationalModel.extend({
   relations: [{
     type: 'HasMany',
     key: 'children',
@@ -165,7 +165,7 @@ Tag.findOrCreateLabel = function(parentLabel, startPos, tagString, bookmarkCount
 
 ////////////////////////////////////////////////////////////////////////////////
 
-TagCollection = Backbone.Collection.extend({
+var TagCollection = Backbone.Collection.extend({
   model: Tag,
 
   /**

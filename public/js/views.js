@@ -16,18 +16,8 @@ var ApiTokenView = Backbone.View.extend({
   },
 
   render: function() {
-    //var $modal = $('#api-token-modal');
-    this.$el.html( this.template() );
-    //$('#api-token-modal').foundation('reveal', 'open');
-    //$modal.html( this.template() );
-    //console.log( $modal.html() );
-    // $modal.foundation('reveal', {
-    //   animation: 'fadeAndPop',
-    //   animationSpeed: 250,
-    //   closeOnBackgroundClick: false
-    // });
-    //$modal.foundation('reveal', 'open');
-    //this.$el.foundation('reveal', 'open');
+    this.$el.html( this.template );
+
     this.$input = this.$("#api-token");
     this.$error = this.$('.error');
     this.$modal = $("#api-token-modal");
@@ -90,7 +80,7 @@ var ApiTokenView = Backbone.View.extend({
  * 
  */
 var AppView = Backbone.View.extend({
-  el: $("#main"),
+  el: $("#container"),
 
   template: _.template($('#app-tmpl').html()),
 
@@ -112,7 +102,7 @@ var AppView = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(this.template());
+    this.$el.html(this.template);
     this.api.postsUpdate(this.handlePostsUpdate(this));
     
     return this;

@@ -9,8 +9,23 @@ body, html {
 }
 
 #main {
+  padding-top: 45px; // offset for nav.top-bar
+
   & > ul {
     margin-bottom: 0;
+  }
+}
+
+nav.top-bar {
+  margin-bottom: 0;
+  position: absolute;
+  width: 100%;
+
+  .name h1 {
+    font-weight: bold;
+    color: #fff;
+    display: block;
+    padding: 0 15px;
   }
 }
 
@@ -22,7 +37,7 @@ ul#labels, ul#bookmarks {
 
   li {
     list-style-type: none;
-    font-size: 14px;
+    font-size: 13px;
     line-height: 18px;
 
     a {

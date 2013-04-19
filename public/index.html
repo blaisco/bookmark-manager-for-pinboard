@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Labels for Pinboard</title>
+  <title>Bookmark Manager for Pinboard</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <link href="/css/foundation.min.css" media="all" rel="stylesheet" type="text/css" />
   <link href="/css/base.css" media="all" rel="stylesheet" type="text/css" />
 </head>
 <body>
   <div id="container">
-    <div id="error" class="alert-box alert center" style="display: none;"></div>
-    <div id="main"></div>
     <div id="unsupported" style="display: none;">
       <p>Hi! Unfortuately your browser is not supported. Please upgrade to one 
         of the following browsers:</p>
@@ -24,13 +22,13 @@
         </ul>
     </div>
     <noscript>
-      <p>Hi! Labels for Pinboard requires JavaScript. Please enable JavaScript and refresh the page to continue.</p>
+      <p>Hi! Bookmark Manager for Pinboard requires JavaScript. Please enable JavaScript and refresh the page to continue.</p>
     </noscript>
   </div>
 
   <script type="text/template" id="api-token-tmpl">
-    <h2>Labels for Pinboard</h2>
-    <p>Labels for Pinboard brings Gmail-esque labels to your Pinboard bookmarks.</p>
+    <h2>Bookmark Manager for Pinboard</h2>
+    <p>Bookmark Manager for Pinboard brings Gmail-esque labels to your Pinboard bookmarks.</p>
     <p>In order to get started, we need your <a href="https://www.pinboard.in/settings/password">Pinboard API Token</a>. Copy and paste it into the box below.</p>
     <form>
       <div class="error alert-box alert center" style="display: none;"></div>
@@ -49,9 +47,32 @@
   </script>
 
   <script type="text/template" id="app-tmpl">
-    <ul id="labels">rawr</ul>
-    <ul id="tags"></ul>
-    <ul id="bookmarks">rawr</ul>
+    <nav class="top-bar">
+      <ul class="title-area">
+        <li class="name">
+          <h1>Bookmark Manager for Pinboard</h1>
+        </li>
+      </ul>
+      <section class="top-bar-section">
+        <!-- Left Nav Section -->
+        <ul class="left">
+          <li class="has-form">
+            <form>
+              <div class="row collapse">
+                <div class="small-12 columns">
+                  <input type="text" name="q" placeholder="Search bookmarks">
+                </div>
+              </div>
+            </form>
+          </li>
+        </ul>
+      </section>
+    </nav>
+    <div id="main">
+      <ul id="labels"></ul>
+      <ul id="tags"></ul>
+      <ul id="bookmarks"></ul>
+      </div>
   </script>
 
   <script type="text/template" id="label-tmpl">

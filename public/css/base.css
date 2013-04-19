@@ -2,10 +2,14 @@ body, html { height: 100%; overflow: hidden; }
 
 #container, #main { height: 100%; overflow: hidden; }
 
+#main { padding-top: 45px; }
 #main > ul { margin-bottom: 0; }
 
+nav.top-bar { margin-bottom: 0; position: absolute; width: 100%; }
+nav.top-bar .name h1 { font-weight: bold; color: #fff; display: block; padding: 0 15px; }
+
 ul#labels, ul#bookmarks { overflow: auto; white-space: nowrap; height: 100%; padding: 5px; }
-ul#labels li, ul#bookmarks li { list-style-type: none; font-size: 14px; line-height: 18px; }
+ul#labels li, ul#bookmarks li { list-style-type: none; font-size: 13px; line-height: 18px; }
 ul#labels li a, ul#bookmarks li a { padding: 0 4px; }
 
 ul#labels { float: left; width: 50%; max-width: 330px; }
