@@ -89,19 +89,13 @@ var AppView = Backbone.View.extend({
   },
 
   initialize: function() {
-    //localStorage.removeItem("apiToken");
     var apiToken = localStorage["apiToken"];
-
-    if(apiToken === undefined) {
-      var apiTokenView = new ApiTokenView();
-      showView(apiTokenView);
-      return;
-    }
-
-    this.api = new PinboardApi(localStorage["apiToken"]);
+    this.api = new PinboardApi(apiToken);
   },
 
   render: function() {
+
+
     this.$el.html(this.template);
     this.api.postsUpdate(this.handlePostsUpdate(this));
     

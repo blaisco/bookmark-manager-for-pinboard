@@ -1,7 +1,16 @@
 $(function() {
   if(supportsHtml5Storage()) {
-    var appView = new AppView();
-    showView(appView);
+    //localStorage.removeItem("apiToken");
+    var apiToken = localStorage["apiToken"];
+
+    // TODO: This is broken. It doesn't exit out of the view.
+    if(apiToken == undefined) {
+      var apiTokenView = new ApiTokenView();
+      showView(apiTokenView);
+    } else {
+      var appView = new AppView();
+      showView(appView);
+    }
   } else {
     $("#unsupported").show();
   }
