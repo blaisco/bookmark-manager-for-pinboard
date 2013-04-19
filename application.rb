@@ -9,6 +9,8 @@ require 'time' # for rfc2822
 PINBOARD_URL = "https://api.pinboard.in/v1/"
 # UPDATE_PATH = "posts/update"
 
+set :public_folder, 'public'
+
 get '/' do
   send_file File.join(settings.public_folder, 'index.html')
 end
