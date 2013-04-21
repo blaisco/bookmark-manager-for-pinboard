@@ -3,14 +3,15 @@ var app = app || {};
 $(function() {
 
   /**
-   * Pinboard stores the api token, last api call, and last update time
+   * Pinboard stores the api token and timings for api calls
    */
   var Pinboard = Backbone.Model.extend({
-    localStorage: new Backbone.LocalStorage("Pinboard"), 
+    localStorage: new Backbone.LocalStorage("pinboard"), 
     defaults: {
       apiToken: null,
-      lastApiCall: null,
-      lastUpdate: null
+      lastApiCall: null, // only do this every 3 seconds
+      lastPostsAll: null, // only do this once every 5 minutes
+      lastUpdate: null // last time bookmarks were updated
     }
   });
 
@@ -87,7 +88,7 @@ $(function() {
   // rootLabel stores the tree of all of our labels
   app.rootLabel = new app.Tag({"id": "rootLabel"});
 
-  ////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
 
   app.Tag.LABEL_CHAR = "~"; // character used to identify labels
   app.Tag.PRIVATE_CHAR = "."; // character used to identify private tags/labels
@@ -184,9 +185,9 @@ $(function() {
     return label;
   };
 
-  ////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
 
-  app.TagCollection = Backbone.Collection.extend({
+  app.TagSet = Backbone.Collection.extend({
     model: app.Tag,
 
     /**
@@ -196,4 +197,27 @@ $(function() {
       return tag.getTag();
     }
   });
+
+  app.tags = new app.TagSet();
+
+  //////////////////////////////////////////////////////////////////////////////
+
+  app.Bookmark = Backbone.Model.extend({
+    defaults: {
+      href: null,
+      description: null, 
+      extended: null,
+      tags: null,
+      time: null,
+      shared: null
+    },
+    idAttribute: "href" // href uniquely identifies a bookmark
+  });
+
+  app.BookmarkSet = Backbone.Collection.extend({
+    localStorage: new Backbone.LocalStorage("bookmarks"), 
+    model: app.Bookmark
+  });
+
+  app.bookmarks = new app.BookmarkSet();
 });

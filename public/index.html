@@ -69,9 +69,9 @@
       </section>
     </nav>
     <div id="main">
-      <ul id="labels"></ul>
-      <ul id="tags"></ul>
-      <ul id="bookmarks"></ul>
+      <div id="labels"></div>
+      <div id="tags"></div>
+      <div id="bookmarks"></div>
       </div>
   </script>
 
@@ -87,9 +87,12 @@
   </script>
 
   <script type="text/template" id="bookmarks-tmpl">
+    <ul>
     <% _.each(bookmarks, function(bookmark) { %>
-      <li class="bookmark <%= bookmark.shared === 'yes' ? '' : 'private' %>"><a href="<%= bookmark.href %>"><span class="description"><%= bookmark.description %></span> <span class="url"><%= bookmark.href %></span></a></li>
+      <% console.log(bookmark) %>
+      <li class="<%= bookmark.shared === 'yes' ? '' : 'private' %>"><a href="<%= bookmark.href %>"><span class="description"><%= bookmark.description %></span> <span class="url"><%= bookmark.href %></span></a></li>
     <% }); %>
+    </ul>
   </script>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>

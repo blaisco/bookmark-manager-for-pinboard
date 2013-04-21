@@ -29,101 +29,107 @@ nav.top-bar {
   }
 }
 
-ul#labels, ul#bookmarks {
+#labels, #bookmarks {
   overflow: auto;
   white-space: nowrap;
   height: 100%;
   padding: 5px;
 
-  li {
-    list-style-type: none;
-    font-size: 13px;
-    line-height: 18px;
+  ul {
 
-    a {
-      padding: 0 4px;
+    li {
+      list-style-type: none;
+      font-size: 13px;
+      line-height: 18px;
+
+      a {
+        padding: 0 4px;
+      }
     }
   }
 }
 
-ul#labels { 
+#labels { 
   float: left;
   width: 50%;
   max-width: 330px;
-  
+
   ul {
     margin: 0;
+
+    li {
+      li a { padding-left: 1em; }
+      li li a { padding-left: 2em; }
+      li li li a { padding-left: 3em; }
+      li li li li a { padding-left: 4em; }
+      li li li li li a { padding-left: 5em; }
+      li li li li li li a { padding-left: 6em; }
+      li li li li li li li a { padding-left: 7em; }
+      li li li li li li li li a { padding-left: 8em; }
+      li li li li li li li li li a { padding-left: 9em; }
+      li li li li li li li li li li a { padding-left: 10em; }
+      /* god be with you if you have more than 10 levels of labels */
+
+      a {
+        color: #333;
+        display: block;
+        border: 1px solid #FFF;
+
+        &:visited {
+          color: #333;
+        }
+
+        &:hover {
+          background-color: #F1F7FF;
+          border-color: #B6D4FC;
+        }
+
+        &.private {
+          color: #999;
+        }
+
+        &.selected {
+          background-color: #DEECFE;
+          border-color: #7DA2CE;
+        }
+      }
+    }
   }
+}
 
-  li {
-    li a { padding-left: 1em; }
-    li li a { padding-left: 2em; }
-    li li li a { padding-left: 3em; }
-    li li li li a { padding-left: 4em; }
-    li li li li li a { padding-left: 5em; }
-    li li li li li li a { padding-left: 6em; }
-    li li li li li li li a { padding-left: 7em; }
-    li li li li li li li li a { padding-left: 8em; }
-    li li li li li li li li li a { padding-left: 9em; }
-    li li li li li li li li li li a { padding-left: 10em; }
-    /* god be with you if you have more than 10 levels of labels */
+#bookmarks {
+  border-left: 5px solid #000; // same color as header
 
-    a {
-      color: #333;
-      display: block;
+  ul {
+
+    li {
       border: 1px solid #FFF;
 
-      &:visited {
-        color: #333;
+      a {
+        color: #11a;
+
+        &:visited {
+          color: #51a;
+        }
+
+        &.private {
+          color: #999;
+        }
+
+        .url {
+          color: #999;
+          padding-left: 1em;
+          visibility: hidden;
+        }
       }
 
       &:hover {
         background-color: #F1F7FF;
         border-color: #B6D4FC;
-      }
 
-      &.private {
-        color: #999;
-      }
-
-      &.selected {
-        background-color: #DEECFE;
-        border-color: #7DA2CE;
-      }
-    }
-  }
-}
-
-ul#bookmarks {
-  border-left: 5px solid #000; // same color as header
-
-  li {
-    border: 1px solid #FFF;
-
-    a {
-      color: #11a;
-
-      &:visited {
-        color: #51a;
-      }
-
-      &.private {
-        color: #999;
-      }
-
-      .url {
-        color: #999;
-        padding-left: 1em;
-        visibility: hidden;
-      }
-    }
-
-    &:hover {
-      background-color: #F1F7FF;
-      border-color: #B6D4FC;
-
-      .url {
-        visibility: visible;
+        .url {
+          visibility: visible;
+        }
       }
     }
   }

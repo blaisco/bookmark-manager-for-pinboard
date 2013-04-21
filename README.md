@@ -34,7 +34,7 @@ But stay tuned! I intend to add these features at some point.
 
 ## TODOs
 
-These are things I intend to add. Suggestions are welcome.
+These are things I plan to implement. Suggestions are welcome.
 
 - When submitting api token, disable button and display spinner
 - Searching for bookmarks  

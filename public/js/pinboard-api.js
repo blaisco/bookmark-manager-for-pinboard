@@ -48,7 +48,11 @@ $(function() {
     }
 
     this.postsAll = function(tag, callback) {
-      this.callApi(this.POSTS_ALL_PATH, {"tag": tag}, callback);
+      var options = {};
+      if(tag) {
+        options["tag"] = tag;
+      }
+      this.callApi(this.POSTS_ALL_PATH, options, callback);
     }
   };
 

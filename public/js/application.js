@@ -21,6 +21,7 @@ $(function() {
   app.reset = function() {
     app.pinboard.destroy();
     app.rootLabel.destroy();
+    app.bookmarks.destroy();
   }
 
   // Start!

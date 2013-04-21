@@ -109,10 +109,12 @@ $(function() {
       return function(success, data) {
         if(success) {      
           app.rootLabel.fetch();
+          console.log(app.rootLabel.get("children").length + " " + app.pinboard.get("updateTime") + " " + data.update_time);
+
           // no root label populated OR there's been an update since we last hit pinboard
           if(app.rootLabel.get("children").length == 0 || app.pinboard.get("updateTime") != data.update_time) {
-            //console.log("fetching new labels");
-            self.api.tagsGet(self.handleTagsGet(self));
+            console.log("fetching new labels");
+            self.api.tagsGet(self.handleTagsGet(self, data.update_time));
           } else {
             self.populateLabels();
           }
@@ -129,10 +131,12 @@ $(function() {
      * On success, `handleTagsGet` builds a tree view containing labels from our 
      * array of tags (`data`). On failure, displays an error.
      */
-    handleTagsGet: function(self) {
+    handleTagsGet: function(self, update_time) {
       return function(success, data) {
 
         if(success) {
+          app.pinboard.save({"updateTime": update_time});
+
           // take our array of tags and build out a tree for the labels
           app.rootLabel = app.Tag.createLabelTree(data);
           app.rootLabel.save();
@@ -152,7 +156,8 @@ $(function() {
       app.rootLabel.getChildren().each(function(label) {
         html += templateFn({"label": label, "templateFn": templateFn});
       });
-      this.$('#labels').html( html );
+      html = "<ul>"+html+"</ul>";
+      this.$('#labels').empty().html( html );
 
       // console.log( JSON.stringify(rootLabel) );
     },
@@ -170,25 +175,37 @@ $(function() {
       var bookmarkCount = parseInt(this.$label.data("count"));
 
       if(bookmarkCount > 0) {
-        this.api.postsAll(tag, this.populateBookmarks(this));
+        this.api.postsAll(tag, this.handlePostsAll(this, tag));
       } else {
         $("#bookmarks").html("There are no bookmarks for this label.");
       }
       // console.log("=> " + tag + " " + bookmarkCount);
     },
 
-    populateBookmarks: function(self) {
+    handlePostsAll: function(self, tag) {
       return function(success, data) {
         if(success) {
-          // $.each(data, function(index, bookmark) {
-          //   console.log(bookmark);
-          // });
-          var template = _.template( $("#bookmarks-tmpl").html(), {"bookmarks": data} );
-          this.$('#bookmarks').empty().html( template );
+          // console.log(JSON.stringify(data));
+          app.bookmarks.add(data);
+          self.populateBookmarks(tag);
+          // console.log( JSON.stringify( app.bookmarks ) );
         } else {
           showError("Unable to fetch bookmarks.");
         }
       }
+    },
+
+    populateBookmarks: function(tag) {
+      // $.each(data, function(index, bookmark) {
+      //   console.log(bookmark);
+      // });
+
+      // split tags on spaces and try to find any bookmarks that match our tag
+      // TODO: Keep an eye on this. It might be a slow spot in the future with
+      //  large numbers of bookmarks.
+      var bookmarks = new app.BookmarkSet(app.bookmarks.filter(function(b){ return _.indexOf(b.get("tags").split(' '), tag) != -1 }));
+      var template = _.template( $("#bookmarks-tmpl").html(), {"bookmarks": bookmarks.toJSON()} );
+      this.$('#bookmarks').empty().html( template );
     }
   });
 
