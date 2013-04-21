@@ -1,44 +1,50 @@
+var app = app || {};
+
 $(function() {
-  if(supportsHtml5Storage()) {
-    //localStorage.removeItem("apiToken");
-    var apiToken = localStorage["apiToken"];
+  app.showView = function(view) {
+    if (app.currentView) {
+      app.currentView.close();
+    }
+    app.currentView = view;
+    app.currentView.render();
+  }
+
+  app.supportsHtml5Storage = function() {
+    try {
+      return 'localStorage' in window && window['localStorage'] !== null;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Delete the data in our app
+  app.reset = function() {
+    app.pinboard.destroy();
+    app.rootLabel.destroy();
+  }
+
+  // Start!
+  if(app.supportsHtml5Storage()) {
+    app.pinboard.fetch();
+    var apiToken = app.pinboard.get("apiToken");
 
     // TODO: This is broken. It doesn't exit out of the view.
     if(apiToken == undefined) {
-      var apiTokenView = new ApiTokenView();
-      showView(apiTokenView);
+      var apiTokenView = new app.ApiTokenView();
+      app.showView(apiTokenView);
     } else {
-      var appView = new AppView();
-      showView(appView);
+      var appView = new app.AppView();
+      app.showView(appView);
     }
   } else {
     $("#unsupported").show();
   }
 });
 
-////////////////////////////////////////////////////////////////////////////////
-// UTILITY FUNCTIONS ///////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-var showView = function(view) {
-  if (window.currentView) {
-    window.currentView.close();
-  }
-  window.currentView = view;
-  window.currentView.render();
-}
-
+// used by app.showView to close out Backbone views + events
 Backbone.View.prototype.close = function(){
   this.trigger('close');
   $(this).empty();
   this.undelegateEvents();
   this.off();
-}
-
-function supportsHtml5Storage() {
-  try {
-    return 'localStorage' in window && window['localStorage'] !== null;
-  } catch (e) {
-    return false;
-  }
 }

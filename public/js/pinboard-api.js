@@ -1,50 +1,55 @@
-var PinboardApi = function(apiToken) {
-  this.HOST = "/p";
-  this.POSTS_UPDATE_PATH = "/posts/update";
-  this.TAGS_GET_PATH = "/tags/get";
-  this.POSTS_ALL_PATH = "/posts/all";
+var app = app || {};
 
-  this.apiToken = apiToken;
+$(function() {
 
-  this.callApi = function(path, params, callback) {
+  app.PinboardApi = function(apiToken) {
+    this.HOST = "/p";
+    this.POSTS_UPDATE_PATH = "/posts/update";
+    this.TAGS_GET_PATH = "/tags/get";
+    this.POSTS_ALL_PATH = "/posts/all";
 
-    var url = this.HOST + path;
+    this.apiToken = apiToken;
 
-    params.format = "json";
-    params.auth_token = this.apiToken;
+    this.callApi = function(path, params, callback) {
 
-    $.ajax({
-      url: url,
-      data: params,
-      type: "GET",
-      cache: false,
-      timeout: 15*1000,
-      dataType: "json",
-      success: function(data) {
-        callback(true, data);
-      },
-      error: function(error) {
-        console.log("[callApi] AJAX Error: " + JSON.stringify(error));
+      var url = this.HOST + path;
 
-        if(error.statusText == "timeout") {
-          callback(false, "A timeout has occurred.");
-        } else {
-          callback(false, "An unexpected error has occurred.");
+      params.format = "json";
+      params.auth_token = this.apiToken;
+
+      $.ajax({
+        url: url,
+        data: params,
+        type: "GET",
+        cache: false,
+        timeout: 15*1000,
+        dataType: "json",
+        success: function(data) {
+          callback(true, data);
+        },
+        error: function(error) {
+          console.log("[callApi] AJAX Error: " + JSON.stringify(error));
+
+          if(error.statusText == "timeout") {
+            callback(false, "A timeout has occurred.");
+          } else {
+            callback(false, "An unexpected error has occurred.");
+          }
         }
-      }
-    });
-  }
+      });
+    }
 
-  this.postsUpdate = function(callback) {
-    this.callApi(this.POSTS_UPDATE_PATH, {}, callback);
-  }
+    this.postsUpdate = function(callback) {
+      this.callApi(this.POSTS_UPDATE_PATH, {}, callback);
+    }
 
-  this.tagsGet = function(callback) {
-    this.callApi(this.TAGS_GET_PATH, {}, callback);
-  }
+    this.tagsGet = function(callback) {
+      this.callApi(this.TAGS_GET_PATH, {}, callback);
+    }
 
-  this.postsAll = function(tag, callback) {
-    this.callApi(this.POSTS_ALL_PATH, {"tag": tag}, callback);
-  }
+    this.postsAll = function(tag, callback) {
+      this.callApi(this.POSTS_ALL_PATH, {"tag": tag}, callback);
+    }
+  };
 
-};
+});
