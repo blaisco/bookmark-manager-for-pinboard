@@ -54,7 +54,7 @@ $(function() {
         if(success) {
           // onwards and upwards!
           app.pinboard.save({
-            "updateTime": data.update_time,
+            "lastBookmarkUpdate": data.update_time,
             "apiToken": self.apiToken
           })
 
@@ -100,50 +100,81 @@ $(function() {
 
     render: function() {
       this.$el.html(this.template);
-      this.api.postsUpdate(this.handlePostsUpdate(this));
-      
+      app.rootLabel.fetch();
+      app.bookmarks.fetch();
+
+      if(app.bookmarks.length == 0) {
+        this.api.tagsGet(this.handleTagsGet(this, app.pinboard.get("lastBookmarkUpdate")));
+      } else {
+        var updatedAfter = app.pinboard.get("lastPostsAll");
+        updatedAfter = (updatedAfter == null) ? 0 : parseInt(updatedAfter) + MIN_DELAY_POSTS_ALL;
+
+        // console.log( new Date().valueOf()/1000 + " > " + updatedAfter/1000 + " " + (new Date().valueOf() > updatedAfter));
+        if(new Date().valueOf() > updatedAfter) {
+          this.api.postsUpdate(this.handlePostsUpdate(this));
+        } else {
+          this.populateLabels();
+        }
+      }
+
       return this;
     },
 
     handlePostsUpdate: function(self) {
       return function(success, data) {
         if(success) {      
-          app.rootLabel.fetch();
-          console.log(app.rootLabel.get("children").length + " " + app.pinboard.get("updateTime") + " " + data.update_time);
+          console.log(app.bookmarks.length + " " + app.pinboard.get("lastBookmarkUpdate") + " " + data.update_time);
 
-          // no root label populated OR there's been an update since we last hit pinboard
-          if(app.rootLabel.get("children").length == 0 || app.pinboard.get("updateTime") != data.update_time) {
-            console.log("fetching new labels");
+          // no bookmarks OR there's been an update since we last hit pinboard
+
+          if(app.pinboard.get("lastBookmarkUpdate") != data.update_time) {
             self.api.tagsGet(self.handleTagsGet(self, data.update_time));
           } else {
             self.populateLabels();
           }
         } else {
-          // this shouldn't happen, but if it does, redirect to apiTokenView
-          var apiTokenView = new app.ApiTokenView();
-          app.showView(apiTokenView);
-          return;
+          showError("Error checking for last bookmark update.");
         }
       }
     },
 
     /**
      * On success, `handleTagsGet` builds a tree view containing labels from our 
-     * array of tags (`data`). On failure, displays an error.
+     * tags Object (`data`) (~Alpha: "1"). On failure, displays an error.
      */
     handleTagsGet: function(self, update_time) {
       return function(success, data) {
-
         if(success) {
-          app.pinboard.save({"updateTime": update_time});
-
           // take our array of tags and build out a tree for the labels
           app.rootLabel = app.Tag.createLabelTree(data);
           app.rootLabel.save();
+
+          self.api.postsAll(self.handlePostsAll(self, update_time));
+        } else {
+          showError("Unable to fetch tags.");
+        }
+      }
+    },
+
+    /**
+     * On success, `handlePostsAll` saves all of the bookmarks received to 
+     * app.bookmarks. On failure, displays an error.
+     */
+    handlePostsAll: function(self, update_time) {
+      return function(success, data) {
+
+        if(success) {
+          app.bookmarks.save(data);
+
+          app.pinboard.save({
+            "lastBookmarkUpdate": update_time, 
+            "lastPostsAll": new Date().valueOf()
+          });
+
           // populate the label tree
           self.populateLabels();
         } else {
-          showError("Unable to fetch tags.");
+          showError("Unable to fetch bookmarks.");
         }
       }
     },
@@ -175,24 +206,11 @@ $(function() {
       var bookmarkCount = parseInt(this.$label.data("count"));
 
       if(bookmarkCount > 0) {
-        this.api.postsAll(tag, this.handlePostsAll(this, tag));
+        this.populateBookmarks(tag);
       } else {
         $("#bookmarks").html("There are no bookmarks for this label.");
       }
       // console.log("=> " + tag + " " + bookmarkCount);
-    },
-
-    handlePostsAll: function(self, tag) {
-      return function(success, data) {
-        if(success) {
-          // console.log(JSON.stringify(data));
-          app.bookmarks.add(data);
-          self.populateBookmarks(tag);
-          // console.log( JSON.stringify( app.bookmarks ) );
-        } else {
-          showError("Unable to fetch bookmarks.");
-        }
-      }
     },
 
     populateBookmarks: function(tag) {
@@ -203,7 +221,11 @@ $(function() {
       // split tags on spaces and try to find any bookmarks that match our tag
       // TODO: Keep an eye on this. It might be a slow spot in the future with
       //  large numbers of bookmarks.
+
+      //var start = new Date().valueOf();
       var bookmarks = new app.BookmarkSet(app.bookmarks.filter(function(b){ return _.indexOf(b.get("tags").split(' '), tag) != -1 }));
+      //var end = new Date().valueOf();
+      //console.log(end-start);
       var template = _.template( $("#bookmarks-tmpl").html(), {"bookmarks": bookmarks.toJSON()} );
       this.$('#bookmarks').empty().html( template );
     }

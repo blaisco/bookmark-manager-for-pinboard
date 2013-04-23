@@ -1,4 +1,5 @@
 var app = app || {};
+var MIN_DELAY_POSTS_ALL = 5*60*1000;
 
 $(function() {
   app.showView = function(view) {
@@ -18,7 +19,7 @@ $(function() {
   }
 
   // Delete the data in our app
-  app.reset = function() {
+  app.destroy = function() {
     app.pinboard.destroy();
     app.rootLabel.destroy();
     app.bookmarks.destroy();
@@ -48,4 +49,18 @@ Backbone.View.prototype.close = function(){
   $(this).empty();
   this.undelegateEvents();
   this.off();
+}
+
+Backbone.Collection.prototype.destroy = function(){
+  var model;
+  while(model = this.first()) {
+    model.destroy();
+  }
+}
+
+Backbone.Collection.prototype.save = function(records){
+  var self = this;
+  _(records).each(function(record) {
+    self.create(record);
+  });
 }

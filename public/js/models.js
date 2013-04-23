@@ -9,9 +9,8 @@ $(function() {
     localStorage: new Backbone.LocalStorage("pinboard"), 
     defaults: {
       apiToken: null,
-      lastApiCall: null, // only do this every 3 seconds
       lastPostsAll: null, // only do this once every 5 minutes
-      lastUpdate: null // last time bookmarks were updated
+      lastBookmarkUpdate: null // last time bookmarks were updated
     }
   });
 
@@ -21,7 +20,7 @@ $(function() {
    * All labels are tags. Not all tags are labels.
    */
   app.Tag = Backbone.RelationalModel.extend({
-    localStorage: new Backbone.LocalStorage("Tag"), 
+    localStorage: new Backbone.LocalStorage("tag"), 
 
     relations: [{
       type: 'HasMany',
@@ -119,7 +118,7 @@ $(function() {
   }
 
   /** 
-   * `createLabelTree` takes an array of tag strings and builds out a tree of 
+   * `createLabelTree` takes an Object of tagStrings:bookmarkCounts and builds out a tree of 
    * labels and sublabels.
    */
   app.Tag.createLabelTree = function(tagStrings) {

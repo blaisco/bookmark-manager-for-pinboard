@@ -36,6 +36,7 @@ But stay tuned! I intend to add these features at some point.
 
 These are things I plan to implement. Suggestions are welcome.
 
+- Display description/tags when clicking on a bookmark
 - When submitting api token, disable button and display spinner
 - Searching for bookmarks  
   Storing bookmarks in localStorage  

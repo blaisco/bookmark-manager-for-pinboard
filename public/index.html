@@ -89,7 +89,6 @@
   <script type="text/template" id="bookmarks-tmpl">
     <ul>
     <% _.each(bookmarks, function(bookmark) { %>
-      <% console.log(bookmark) %>
       <li class="<%= bookmark.shared === 'yes' ? '' : 'private' %>"><a href="<%= bookmark.href %>"><span class="description"><%= bookmark.description %></span> <span class="url"><%= bookmark.href %></span></a></li>
     <% }); %>
     </ul>

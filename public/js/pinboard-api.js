@@ -11,6 +11,7 @@ $(function() {
     this.apiToken = apiToken;
 
     this.callApi = function(path, params, callback) {
+      console.log("[callApi] " + path);
 
       var url = this.HOST + path;
 
@@ -47,7 +48,7 @@ $(function() {
       this.callApi(this.TAGS_GET_PATH, {}, callback);
     }
 
-    this.postsAll = function(tag, callback) {
+    this.postsAll = function(callback, tag) {
       var options = {};
       if(tag) {
         options["tag"] = tag;
