@@ -53,6 +53,7 @@ These are things I plan to implement. Suggestions are welcome.
 - Import your Chrome Bookmarks as labels
 - Create a BMFP bookmarklet with support for labels
 - Maybe get a jsonp implementation from Pinboard so that I can drop the rack app portion
+- Linkify tags/labels displayed as a part of a bookmark
 
 ## Potential bugs
 

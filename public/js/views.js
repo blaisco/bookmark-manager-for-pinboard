@@ -90,7 +90,8 @@ $(function() {
     template: _.template($('#app-tmpl').html()),
 
     events: {
-      "click a.tag": "loadBookmarks"
+      "click a.tag": "loadBookmarks",
+      "click #bookmarks li": "selectBookmark"
     },
 
     initialize: function() {
@@ -123,7 +124,7 @@ $(function() {
     handlePostsUpdate: function(self) {
       return function(success, data) {
         if(success) {      
-          console.log(app.bookmarks.length + " " + app.pinboard.get("lastBookmarkUpdate") + " " + data.update_time);
+          // console.log(app.bookmarks.length + " " + app.pinboard.get("lastBookmarkUpdate") + " " + data.update_time);
 
           // no bookmarks OR there's been an update since we last hit pinboard
 
@@ -214,20 +215,20 @@ $(function() {
     },
 
     populateBookmarks: function(tag) {
-      // $.each(data, function(index, bookmark) {
-      //   console.log(bookmark);
-      // });
-
-      // split tags on spaces and try to find any bookmarks that match our tag
-      // TODO: Keep an eye on this. It might be a slow spot in the future with
-      //  large numbers of bookmarks.
-
-      //var start = new Date().valueOf();
       var bookmarks = new app.BookmarkSet(app.bookmarks.filter(function(b){ return _.indexOf(b.get("tags").split(' '), tag) != -1 }));
-      //var end = new Date().valueOf();
-      //console.log(end-start);
       var template = _.template( $("#bookmarks-tmpl").html(), {"bookmarks": bookmarks.toJSON()} );
       this.$('#bookmarks').empty().html( template );
+    },
+
+    selectBookmark: function(event) {
+      if(! $(event.currentTarget).hasClass("selected")) {
+        event.preventDefault();
+      }
+      if (this.$bookmark != undefined) {
+        this.$bookmark.removeClass("selected");
+      }
+      this.$bookmark = $(event.currentTarget);
+      this.$bookmark.addClass("selected");
     }
   });
 

@@ -89,7 +89,17 @@
   <script type="text/template" id="bookmarks-tmpl">
     <ul>
     <% _.each(bookmarks, function(bookmark) { %>
-      <li class="<%= bookmark.shared === 'yes' ? '' : 'private' %>"><a href="<%= bookmark.href %>"><span class="description"><%= bookmark.description %></span> <span class="url"><%= bookmark.href %></span></a></li>
+      <li class="<%= bookmark.shared === 'yes' ? '' : 'private' %>">
+        <a href="<%= bookmark.href %>"><span class="description"><%= bookmark.description %></span> <span class="url"><%= bookmark.href %></span></a>
+        <div class="additional">
+          <div class="tags">
+            <% _.each(_.sortBy(bookmark.tags.split(' '), function(tag) {return app.Tag.deprivatize(tag)}), function(tag) { %>
+              <span class="label <%= !app.Tag.isLabel(tag) ? 'tag' : '' %> <%= app.Tag.isPrivate(tag) ? 'private' : '' %>"><%= app.Tag.tokenify(tag) %></span>
+            <% }); %>
+          </div>
+          <div class="extended"><%= bookmark.extended.replace(/\n/g,"<br/>") %></div>
+        </div>
+      </li>
     <% }); %>
     </ul>
   </script>
