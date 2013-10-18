@@ -1,6 +1,6 @@
 body, html { height: 100%; overflow: hidden; }
 
-#container, #main { height: 100%; overflow: hidden; }
+#container, #main, #app { height: 100%; overflow: hidden; }
 
 #main { padding-top: 45px; }
 #main > ul { margin-bottom: 0; }

@@ -1,66 +1,26 @@
-var app = app || {};
-var MIN_DELAY_POSTS_ALL = 5*60*1000;
+var App = new Backbone.Marionette.Application();
 
-$(function() {
-  app.showView = function(view) {
-    if (app.currentView) {
-      app.currentView.close();
-    }
-    app.currentView = view;
-    app.currentView.render();
-  }
+App.addRegions({
+  header : '#header',
+  main   : '#main'
+});
 
-  app.supportsHtml5Storage = function() {
-    try {
-      return 'localStorage' in window && window['localStorage'] !== null;
-    } catch (e) {
-      return false;
-    }
-  }
+App.addInitializer(function(){
+  //App.PinboardApi.destroy();
+  App.header.show(new Header());
 
-  // Delete the data in our app
-  app.destroy = function() {
-    app.pinboard.destroy();
-    app.rootLabel.destroy();
-    app.bookmarks.destroy();
-  }
-
-  // Start!
-  if(app.supportsHtml5Storage()) {
-    app.pinboard.fetch();
-    var apiToken = app.pinboard.get("apiToken");
-
-    // TODO: This is broken. It doesn't exit out of the view.
-    if(apiToken == undefined) {
-      var apiTokenView = new app.ApiTokenView();
-      app.showView(apiTokenView);
+  if(supportsHtml5Storage()) {
+    if(App.PinboardApi.hasValidated()) {
+      App.main.show(new AppLayout());
     } else {
-      var appView = new app.AppView();
-      app.showView(appView);
+      App.main.show(new ApiTokenView());
     }
   } else {
     $("#unsupported").show();
   }
 });
 
-// used by app.showView to close out Backbone views + events
-Backbone.View.prototype.close = function(){
-  this.trigger('close');
-  $(this).empty();
-  this.undelegateEvents();
-  this.off();
-}
-
-Backbone.Collection.prototype.destroy = function(){
-  var model;
-  while(model = this.first()) {
-    model.destroy();
-  }
-}
-
-Backbone.Collection.prototype.save = function(records){
-  var self = this;
-  _(records).each(function(record) {
-    self.create(record);
-  });
-}
+// When we've validated the api token, startup the app
+App.vent.on("api:validated", function(){
+  App.main.show(new AppLayout());
+});

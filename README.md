@@ -1,7 +1,7 @@
 # Bookmark Manager For Pinboard
 
 A web app for your [Pinboard bookmarks](http://www.pinboard.in) that combines 
-Chrome's Bookmark Manager with Gmail's Labels.
+Chrome's Bookmark Manager with Gmail's labels.
 
 ## Live demo
 
@@ -16,6 +16,8 @@ It's a simple rack app. Get up and running with:
 and
 
     $ rackup
+
+And then head to [http://localhost:9292/](http://localhost:9292/).
 
 ## About
 
@@ -36,8 +38,9 @@ But stay tuned! I intend to add these features at some point.
 
 These are things I plan to implement. Suggestions are welcome.
 
+- Remote calls to `tagsGet` in PinboardApi and build out tags via `postsAll`
 - Display description/tags when clicking on a bookmark
-- When submitting api token, disable button and display spinner
+- When submitting api token, disable the submit button and display spinner
 - Searching for bookmarks  
   Storing bookmarks in localStorage  
   Tracking the last api call for posts/all and only hitting it at most every 5 minutes  
@@ -55,10 +58,16 @@ These are things I plan to implement. Suggestions are welcome.
 - Maybe get a jsonp implementation from Pinboard so that I can drop the rack app portion
 - Linkify tags/labels displayed as a part of a bookmark
 
+## Bugs
+
+- A label that is both private and not (e.g. .~Alpha and ~Alpha) will get displayed as public in the tree but within a bookmark will (always?) display as private
+
 ## Potential bugs
 
 These are things that might cause issues but I haven't tested them yet.
 
 - Tag with just a tilde ~
+- Tag with just a dot . (not sure if Pinboard even allows this)
+- Tag with just one character x
 - Tag beginning or ending in a slash(es) ~Alpha/ ~/Alpha
 - Tag with multiple slashes (~Alpha/////Bravo)

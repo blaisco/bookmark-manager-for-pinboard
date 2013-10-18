@@ -8,6 +8,9 @@
 </head>
 <body>
   <div id="container">
+    <div id="header"></div>
+    <div id="main"></div>
+    
     <div id="unsupported" style="display: none;">
       <p>Hi! Unfortuately your browser is not supported. Please upgrade to one 
         of the following browsers:</p>
@@ -27,26 +30,32 @@
   </div>
 
   <script type="text/template" id="api-token-tmpl">
-    <h2>Bookmark Manager for Pinboard</h2>
-    <p>Bookmark Manager for Pinboard brings Gmail-esque labels to your Pinboard bookmarks.</p>
-    <p>In order to get started we need your <a href="https://www.pinboard.in/settings/password">Pinboard API Token</a>. Copy and paste it into the box below.</p>
-    <form>
-      <div class="error alert-box alert center" style="display: none;"></div>
-      <div class="row collapse">
-        <div  style="width: 140px" class="columns">
-          <label class="inline" for="api-token">Pinboard API Token</label>
-        </div>
-        <div class="small-7 columns">
-          <input id="api-token" type="text" class="span6" placeholder="username:0A1B2C3D4E5F6A7B8C9D">
-        </div>
-        <div class="small-1 columns end">
-          <button type="submit" class="button postfix">Go</button>
+    <div class="row collapse">
+      <div class="small-12 columns">
+        <div class="panel" style="margin-top: 40px;">
+          <p>Bookmark Manager for Pinboard brings Chrome's Bookmark Manager and Gmail's labels to your Pinboard bookmarks.</p>
+          <p>In order to get started we need your <a href="https://www.pinboard.in/settings/password" target="_blank">Pinboard API Token</a>. Copy and paste it into the box below.</p>
+          <p>Don't worry, your Pinboard API Token is only ever saved on your machine.</p><!--'-->
+          <form>
+            <div class="error alert-box alert center" style="display: none;"></div>
+            <div class="row collapse">
+              <div  style="width: 140px" class="columns">
+                <label class="inline" for="api-token">Pinboard API Token</label>
+              </div>
+              <div class="small-7 columns">
+                <input id="api-token" type="text" class="span6" placeholder="username:0A1B2C3D4E5F6A7B8C9D">
+              </div>
+              <div class="small-1 columns end">
+                <button type="submit" class="button postfix">Go</button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
-    </form>
+    </div>
   </script>
 
-  <script type="text/template" id="app-tmpl">
+  <script type="text/template" id="header-tmpl">
     <nav class="top-bar">
       <ul class="title-area">
         <li class="name">
@@ -60,7 +69,7 @@
             <form>
               <div class="row collapse">
                 <div class="small-12 columns">
-                  <input type="text" name="q" placeholder="Search bookmarks">
+                  <!--<input type="text" name="q" placeholder="Search bookmarks">-->
                 </div>
               </div>
             </form>
@@ -68,24 +77,31 @@
         </ul>
       </section>
     </nav>
-    <div id="main">
-      <div id="labels"></div>
-      <div id="tags"></div>
-      <div id="bookmarks"></div>
-      </div>
+  </script>
+
+  <script type="text/template" id="app-tmpl">
+    <div id="labels"></div>
+    <div id="tags"></div>
+    <div id="bookmarks"></div>
   </script>
 
   <script type="text/template" id="label-tmpl">
     <li>
-      <a href="#" class="tag <%= label.isPrivate() ? 'private' : '' %>" data-tag="<%= label.getTag() %>" data-count="<%= label.getBookmarkCount() %>"><%= label.getTitle() %></a>
-      <% if(label.getChildren().length) { %><ul><% } %>
-      <% label.getChildren().each(function(child) { %>
-        <%= templateFn({"label": child, "templateFn": templateFn}) %>
-      <% }); %>
-      <% if(label.getChildren().length) { %></ul><% } %>
+      <a href="#" class="tag <%= isPrivate ? 'private' : '' %>" data-tag="<%= tag %>" data-count="<%= bookmarkCount %>"><%= title %></a>
     </li>
+    <ul></ul>
   </script>
 
+  <!-- This is what the label-tmpl should look like. The extra data tags are not needed.
+  <script type="text/template" id="label-tmpl">
+    <li>
+      <a href="#" class="tag <%= isPrivate ? 'private' : '' %>"><%= title %></a>
+    </li>
+    <ul></ul>
+  </script>
+  -->
+
+  <!--
   <script type="text/template" id="bookmarks-tmpl">
     <ul>
     <% _.each(bookmarks, function(bookmark) { %>
@@ -93,8 +109,8 @@
         <a href="<%= bookmark.href %>"><span class="description"><%= bookmark.description %></span> <span class="url"><%= bookmark.href %></span></a>
         <div class="additional">
           <div class="tags">
-            <% _.each(_.sortBy(bookmark.tags.split(' '), function(tag) {return app.Tag.deprivatize(tag)}), function(tag) { %>
-              <span class="label <%= !app.Tag.isLabel(tag) ? 'tag' : '' %> <%= app.Tag.isPrivate(tag) ? 'private' : '' %>"><%= app.Tag.tokenify(tag) %></span>
+            <% _.each(_.sortBy(bookmark.tags.split(' '), function(tag) {return Tag.deprivatize(tag)}), function(tag) { %>
+              <span class="label <%= !Tag.isLabel(tag) ? 'tag' : '' %> <%= Tag.isPrivate(tag) ? 'private' : '' %>"><%= Tag.tokenify(tag) %></span>
             <% }); %>
           </div>
           <div class="extended"><%= bookmark.extended.replace(/\n/g,"<br/>") %></div>
@@ -103,19 +119,51 @@
     <% }); %>
     </ul>
   </script>
+-->
+
+  <script type="text/template" id="bookmark-tmpl">
+    <div class="<%= shared === 'yes' ? '' : 'private' %>">
+      <a href="<%= href %>"><span class="description"><%= description %></span> <span class="url"><%= href %></span></a>
+      <div class="additional">
+        <div class="tags">
+          <% _.each(_.sortBy(tags.split(' '), function(tag) {return Tag.deprivatize(tag)}), function(tag) { %>
+            <% console.log(description + " " + tag + " " + Tag.isPrivate(tag)); %>
+            <span class="label <%= !Tag.isLabel(tag) ? 'tag' : '' %> <%= Tag.isPrivate(tag) ? 'private' : '' %>"><%= Tag.tokenify(tag) %></span>
+          <% }); %>
+        </div>
+        <div class="extended"><%= extended.replace(/\n/g,"<br/>") %></div>
+      </div>
+    </div>
+  </script>
 
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone-min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/backbone-relational/0.7.0/backbone-relational.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/backbone-relational/0.8.5/backbone-relational.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/backbone-localstorage.js/1.1.0/backbone.localStorage-min.js"></script>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/4.1.2/js/foundation.min.js"></script>
-  <script src="/js/pinboard-api.js"></script>
-  <script src="/js/models.js"></script>
-  <script src="/js/views.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/1.1.0-bundled/backbone.marionette.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/foundation/4.3.1/js/foundation.min.js"></script>
+  <script src="/js/util.js"></script>
+  <script src="/js/models/bookmark.js"></script>
+  <script src="/js/models/tag.js"></script>
+  <script src="/js/collections/bookmark-set.js"></script>
+  <script src="/js/collections/tag-set.js"></script>
+  <script src="/js/views/header.js"></script>
+  <script src="/js/views/label-view.js"></script>
+  <script src="/js/views/label-collection-view.js"></script>
+  <script src="/js/views/bookmark-view.js"></script>
+  <script src="/js/views/bookmark-collection-view.js"></script>
+  <script src="/js/views/api-token-view.js"></script>
+  <script src="/js/views/app-layout.js"></script>
   <script src="/js/application.js"></script>
+  <script src="/js/modules/pinboard-api.js"></script>
 
-  <div id="api-token-modal" class="reveal-modal large"></div>
+  <script>
+    $(function(){
+      // Start the app (defined in js/application.js)
+      App.start();
+    });
+  </script>
 </body>
 </html>
 
