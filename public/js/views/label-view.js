@@ -1,67 +1,63 @@
-// The recursive label view
+/**
+ * LabelView is a recursive `CompositeView` for displaying our tree of labels.
+ * More info on CompositeViews here: https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.compositeview.md
+ * And how we're using it recursively: http://lostechies.com/derickbailey/2012/04/05/composite-views-tree-structures-tables-and-more/
+ * And an example: http://jsfiddle.net/hoffmanc/NH9J6/ (broken because the libraries don't load in, but the code is valid)
+ */
 var LabelView = Backbone.Marionette.CompositeView.extend({
 
   template: "#label-tmpl",
   
   tagName: "li",
 
-  // events: {
-  //   "click a": "loadBookmarks"
-  // },
-  
-  initialize: function(){
-    // grab the child collection from the parent model
-    // so that we can render the collection as children
-    // of this parent node
-    this.collection = this.model.get("children");
+  events: {
+    "click li": "labelSelected"
   },
   
+  initialize: function(){
+    // Grab the child collection from the parent model so that we can 
+    //  render the collection as children of this parent node.
+    this.collection = this.model.get("children");
+
+    // Re-render the view if the model becomes (or unbecomes) `selected`
+    this.listenTo(this.model, "change:selected", this.render);
+  },
+  
+  /**
+   * Nest the child collection inside of the current list item.
+   */ 
   appendHtml: function(collectionView, itemView){
-    // ensure we nest the child list inside of 
-    // the current list item
     collectionView.$("ul:first").append(itemView.el);
   },
 
+  /**
+   * Remove the `ul` from our template if we're not using it.
+   */
   onRender: function() {
-    // Remove the `ul` from our template if we're not using it
     if(this.collection.length == 0){
       this.$("ul:first").remove();
     }
   },
 
+  /**
+   * Adding a couple functions as additional attributes in the JSON.
+   */
   serializeData: function() {
     return _.extend(this.model.toJSON(),
     {
       title: this.model.getTitle(),
       isPrivate: this.model.isPrivate(),
     });
-  }//,
+  },
 
-  // loadBookmarks: function(event) {
-  //   event.preventDefault();
-  //   event.stopPropagation();
-
-  //   console.log(this.model.get("tag"));
-  //   console.log(this.bookmarkCount);
-
-  //   if (this.$label != undefined) {
-  //     this.$label.removeClass("selected");
-  //   }
-  //   this.$label = $(event.currentTarget);
-  //   this.$label.addClass("selected");
-
-  //   if(this.bookmarkCount > 0) {
-  //     this.populateBookmarks(tag);
-  //   } else {
-  //     $("#bookmarks").html("There are no bookmarks for this label.");
-  //   }
-  // },
-
-  // populateBookmarks: function(tag) {
-  //   // TODO: What does this do? Looks cool.
-  //   var bookmarks = new BookmarkSet(this.bookmarks.filter(function(b){ return _.indexOf(b.get("tags").split(' '), tag) != -1 }));
-  //   var template = _.template( $("#bookmarks-tmpl").html(), {"bookmarks": bookmarks.toJSON()} );
-  //   this.$('#bookmarks').empty().html( template );
-  // }
+  /**
+   * This marks our tag as selected (which ends up triggering an event that 
+   * filters our bookmarks.)
+   */
+  labelSelected: function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.model.selected();
+  }
 
 });

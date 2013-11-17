@@ -1,8 +1,10 @@
-// View for a collection of bookmarks
+/**
+ * View for a collection of bookmarks.
+ */ 
 var BookmarkCollectionView = Backbone.Marionette.CollectionView.extend({
 
   itemView: BookmarkView,
 
-  tagName: "ul"
+  tagName: "ul",
 
 });

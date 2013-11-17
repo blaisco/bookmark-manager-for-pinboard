@@ -7,29 +7,24 @@ var ApiTokenView = Backbone.Marionette.ItemView.extend({
 
   template: '#api-token-tmpl',
 
+  ui: {
+    token: '#api-token',
+    error: '.error'
+  },
+
   events: {
     "submit form": "checkToken"
   },
 
-  initialize: function() {
-    this.apiToken = null;
-  },
-
-  render: function() {
-    var template = _.template( $(this.template).html() );
-    this.$el.html( template );
-
-    this.$input = this.$("#api-token");
-    this.$error = this.$('.error');
-
-    return this;
-  },
-
+  /**
+   * Check the token to ensure that we have a value for it, then validate it 
+   * with the `PinboardApi` and call `handlePostsUpdate` with the result.
+   */
   checkToken: function(event) {
     event.preventDefault();
     this.clearError();
 
-    var apiToken = this.$input.val();
+    var apiToken = this.ui.token.val();
     if(!apiToken) {
       this.showError("Please enter an API token.");
     } else {
@@ -40,6 +35,10 @@ var ApiTokenView = Backbone.Marionette.ItemView.extend({
     }
   },
 
+  /**
+   * If the API token was valid, trigger the `api:validated` event. Otherwise
+   * show an error message from the API.
+   */
   handlePostsUpdate: function(self) {
     return function(success, data) {
       if(success) {
@@ -51,13 +50,19 @@ var ApiTokenView = Backbone.Marionette.ItemView.extend({
     }
   },
 
+  /**
+   * Log and display an error message.
+   */
   showError: function(errorText) {
     console.log(errorText);
-    this.$error.text(errorText).show();
+    this.ui.error.text(errorText).show();
   },
 
+  /**
+   * Remove the error message from the screen.
+   */
   clearError: function() {
-    this.$error.empty().hide();
+    this.ui.error.empty().hide();
   }
 
 });

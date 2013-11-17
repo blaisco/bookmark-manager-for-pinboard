@@ -5,6 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <link href="/css/foundation.min.css" media="all" rel="stylesheet" type="text/css" />
   <link href="/css/base.css" media="all" rel="stylesheet" type="text/css" />
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
 </head>
 <body>
   <div id="container">
@@ -29,32 +30,6 @@
     </noscript>
   </div>
 
-  <script type="text/template" id="api-token-tmpl">
-    <div class="row collapse">
-      <div class="small-12 columns">
-        <div class="panel" style="margin-top: 40px;">
-          <p>Bookmark Manager for Pinboard brings Chrome's Bookmark Manager and Gmail's labels to your Pinboard bookmarks.</p>
-          <p>In order to get started we need your <a href="https://www.pinboard.in/settings/password" target="_blank">Pinboard API Token</a>. Copy and paste it into the box below.</p>
-          <p>Don't worry, your Pinboard API Token is only ever saved on your machine.</p><!--'-->
-          <form>
-            <div class="error alert-box alert center" style="display: none;"></div>
-            <div class="row collapse">
-              <div  style="width: 140px" class="columns">
-                <label class="inline" for="api-token">Pinboard API Token</label>
-              </div>
-              <div class="small-7 columns">
-                <input id="api-token" type="text" class="span6" placeholder="username:0A1B2C3D4E5F6A7B8C9D">
-              </div>
-              <div class="small-1 columns end">
-                <button type="submit" class="button postfix">Go</button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </script>
-
   <script type="text/template" id="header-tmpl">
     <nav class="top-bar">
       <ul class="title-area">
@@ -75,9 +50,48 @@
             </form>
           </li>
         </ul>
+        <ul class="right">
+          <li>
+            <a><i id="api-spinner" class="fa fa-refresh fa-spin" style="color: white; display: none;"></i></a>
+          </li>
+        </ul>
       </section>
     </nav>
   </script>
+
+  <script type="text/template" id="api-token-tmpl">
+    <div class="row collapse">
+      <div class="small-12 columns">
+        <div class="panel" style="margin-top: 40px;">
+
+          <p>Bookmark Manager for Pinboard is a web app for your 
+          <a href="http://www.pinboard.in">Pinboard</a> bookmarks that combines 
+          Chrome's Bookmark Manager with Gmail's labels.</p>
+
+          <p>In order to get started we need your <a href="https://www.pinboard.in/settings/password" target="_blank">Pinboard API Token</a>. Copy and paste it into the box below.</p>
+
+          <p>Don't worry, your Pinboard API Token is saved on your computer
+          and is only used to communicate with Pinboard.</p><!--'-->
+
+          <form>
+            <div class="error alert-box alert center" style="display: none;"></div>
+            <div class="row collapse">
+              <div  style="width: 140px" class="columns">
+                <label class="inline" for="api-token">Pinboard API Token</label>
+              </div>
+              <div class="small-7 columns">
+                <input id="api-token" type="text" class="span6" placeholder="username:0A1B2C3D4E5F6A7B8C9D">
+              </div>
+              <div class="small-1 columns end">
+                <button type="submit" class="button postfix">Go</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </script>
+
 
   <script type="text/template" id="app-tmpl">
     <div id="labels"></div>
@@ -87,49 +101,21 @@
 
   <script type="text/template" id="label-tmpl">
     <li>
-      <a href="#" class="tag <%= isPrivate ? 'private' : '' %>" data-tag="<%= tag %>" data-count="<%= bookmarkCount %>"><%= title %></a>
+      <a href="#" class="tag <%= selected ? 'selected' : '' %> <%= isPrivate ? 'private' : '' %>"><%= title %></a>
     </li>
     <ul></ul>
   </script>
-
-  <!-- This is what the label-tmpl should look like. The extra data tags are not needed.
-  <script type="text/template" id="label-tmpl">
-    <li>
-      <a href="#" class="tag <%= isPrivate ? 'private' : '' %>"><%= title %></a>
-    </li>
-    <ul></ul>
-  </script>
-  -->
-
-  <!--
-  <script type="text/template" id="bookmarks-tmpl">
-    <ul>
-    <% _.each(bookmarks, function(bookmark) { %>
-      <li class="<%= bookmark.shared === 'yes' ? '' : 'private' %>">
-        <a href="<%= bookmark.href %>"><span class="description"><%= bookmark.description %></span> <span class="url"><%= bookmark.href %></span></a>
-        <div class="additional">
-          <div class="tags">
-            <% _.each(_.sortBy(bookmark.tags.split(' '), function(tag) {return Tag.deprivatize(tag)}), function(tag) { %>
-              <span class="label <%= !Tag.isLabel(tag) ? 'tag' : '' %> <%= Tag.isPrivate(tag) ? 'private' : '' %>"><%= Tag.tokenify(tag) %></span>
-            <% }); %>
-          </div>
-          <div class="extended"><%= bookmark.extended.replace(/\n/g,"<br/>") %></div>
-        </div>
-      </li>
-    <% }); %>
-    </ul>
-  </script>
--->
 
   <script type="text/template" id="bookmark-tmpl">
-    <div class="<%= shared === 'yes' ? '' : 'private' %>">
+    <div class="bookmark <%= selected ? 'selected' : '' %> <%= shared === 'yes' ? '' : 'private' %>">
       <a href="<%= href %>"><span class="description"><%= description %></span> <span class="url"><%= href %></span></a>
-      <div class="additional">
+      <div class="additional <%= selected ? '' : 'hidden' %>">
         <div class="tags">
-          <% _.each(_.sortBy(tags.split(' '), function(tag) {return Tag.deprivatize(tag)}), function(tag) { %>
-            <% console.log(description + " " + tag + " " + Tag.isPrivate(tag)); %>
-            <span class="label <%= !Tag.isLabel(tag) ? 'tag' : '' %> <%= Tag.isPrivate(tag) ? 'private' : '' %>"><%= Tag.tokenify(tag) %></span>
-          <% }); %>
+          <% if(tags != "") { %>
+            <% _.each(_.sortBy(tags.split(' '), function(tag) {return Tag.deprivatize(tag)}), function(tag) { %>
+              <span class="label <%= !Tag.isLabel(tag) ? 'tag' : '' %> <%= Tag.isPrivate(tag) ? 'private' : '' %>"><%= Tag.tokenify(tag) %></span>
+            <% }); %>
+          <% } %>
         </div>
         <div class="extended"><%= extended.replace(/\n/g,"<br/>") %></div>
       </div>
@@ -146,6 +132,7 @@
   <script src="/js/util.js"></script>
   <script src="/js/models/bookmark.js"></script>
   <script src="/js/models/tag.js"></script>
+  <script src="/js/collections/filtered-collection.js"></script>
   <script src="/js/collections/bookmark-set.js"></script>
   <script src="/js/collections/tag-set.js"></script>
   <script src="/js/views/header.js"></script>

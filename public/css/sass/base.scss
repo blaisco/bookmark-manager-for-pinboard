@@ -3,6 +3,10 @@ body, html {
   overflow: hidden;
 }
 
+.hidden {
+  display: none;
+}
+
 #container, #main, #app {
   height: 100%;
   overflow: hidden;
@@ -100,76 +104,78 @@ nav.top-bar {
   ul {
 
     li {
-      border: 1px solid #FFF;
-      padding: 0 4px;
-      cursor: pointer;
 
-      a {
-        color: #11a;
+      div.bookmark {
+        border: 1px solid #FFF;
+        padding: 0 4px;
+        cursor: pointer;
 
-        &:visited {
-          color: #51a;
-        }
+        a {
+          color: #11a;
 
-        &.private {
-          color: #999;
-        }
-
-        .url {
-          color: #999;
-          padding-left: 1em;
-          visibility: hidden;
-        }
-      }
-
-      .additional {
-        display: none;
-        white-space: normal;
-
-        .tags {
-          .label {
-            margin-bottom: 3px;
-
-            &.tag {
-              background-color: #a51;
-              color: #fff;
-              -webkit-border-radius: 1000px;
-              border-radius: 1000px;
-
-              &.private {
-                background-color: desaturate(#a51, 40%);
-                color: #FFF;
-              }
-            }
-
-            &.private {
-              background-color: desaturate(#2ba6cb, 40%);
-              color: #FFF;
-            }
+          &:visited {
+            color: #51a;
           }
-        }
-      }
 
-      &:hover {
-        background-color: #F1F7FF;
-        border-color: #B6D4FC;
+          &.private {
+            color: #999;
+          }
 
-        .url {
-          visibility: visible;
-        }
-      }
-
-      &.selected {
-        background-color: #DEECFE;
-        border-color: #7DA2CE;
-        cursor: default;
-
-        .url {
-          visibility: visible;
+          .url {
+            color: #999;
+            padding-left: 1em;
+            visibility: hidden;
+          }
         }
 
         .additional {
-          display: block;
+          white-space: normal;
+
+          .tags {
+            .label {
+              margin-bottom: 3px;
+
+              &.tag {
+                background-color: #a51;
+                color: #fff;
+                -webkit-border-radius: 1000px;
+                border-radius: 1000px;
+
+                &.private {
+                  background-color: desaturate(#a51, 40%);
+                  color: #FFF;
+                }
+              }
+
+              &.private {
+                background-color: desaturate(#2ba6cb, 40%);
+                color: #FFF;
+              }
+            }
+          }
+        }
+
+        &:hover {
+          background-color: #F1F7FF;
+          border-color: #B6D4FC;
+
+          .url {
+            visibility: visible;
+          }
+        }
+
+        &.selected {
+          background-color: #DEECFE;
+          border-color: #7DA2CE;
+          cursor: default;
+
+          .url {
+            visibility: visible;
+          }
+
+          .additional {
+            display: block;
+          }
         }
       }
     }

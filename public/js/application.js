@@ -6,12 +6,15 @@ App.addRegions({
 });
 
 App.addInitializer(function(){
-  //App.PinboardApi.destroy();
+  // [for testing] Blitz everything:
+  //localStorage.clear();  
+
   App.header.show(new Header());
 
   if(supportsHtml5Storage()) {
     if(App.PinboardApi.hasValidated()) {
       App.main.show(new AppLayout());
+      //App.module("Manager").start();
     } else {
       App.main.show(new ApiTokenView());
     }

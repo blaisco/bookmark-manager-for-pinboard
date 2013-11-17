@@ -1,5 +1,7 @@
 body, html { height: 100%; overflow: hidden; }
 
+.hidden { display: none; }
+
 #container, #main, #app { height: 100%; overflow: hidden; }
 
 #main { padding-top: 45px; }
@@ -31,18 +33,18 @@ nav.top-bar .name h1 { font-weight: bold; color: #fff; display: block; padding: 
 #labels ul li a.selected { background-color: #DEECFE; border-color: #7DA2CE; }
 
 #bookmarks { border-left: 5px solid #000; }
-#bookmarks ul li { border: 1px solid #FFF; padding: 0 4px; cursor: pointer; }
-#bookmarks ul li a { color: #11a; }
-#bookmarks ul li a:visited { color: #51a; }
-#bookmarks ul li a.private { color: #999; }
-#bookmarks ul li a .url { color: #999; padding-left: 1em; visibility: hidden; }
-#bookmarks ul li .additional { display: none; white-space: normal; }
-#bookmarks ul li .additional .tags .label { margin-bottom: 3px; }
-#bookmarks ul li .additional .tags .label.tag { background-color: #a51; color: #fff; -webkit-border-radius: 1000px; border-radius: 1000px; }
-#bookmarks ul li .additional .tags .label.tag.private { background-color: #855936; color: #FFF; }
-#bookmarks ul li .additional .tags .label.private { background-color: #5c8c9a; color: #FFF; }
-#bookmarks ul li:hover { background-color: #F1F7FF; border-color: #B6D4FC; }
-#bookmarks ul li:hover .url { visibility: visible; }
-#bookmarks ul li.selected { background-color: #DEECFE; border-color: #7DA2CE; cursor: default; }
-#bookmarks ul li.selected .url { visibility: visible; }
-#bookmarks ul li.selected .additional { display: block; }
+#bookmarks ul li div.bookmark { border: 1px solid #FFF; padding: 0 4px; cursor: pointer; }
+#bookmarks ul li div.bookmark a { color: #11a; }
+#bookmarks ul li div.bookmark a:visited { color: #51a; }
+#bookmarks ul li div.bookmark a.private { color: #999; }
+#bookmarks ul li div.bookmark a .url { color: #999; padding-left: 1em; visibility: hidden; }
+#bookmarks ul li div.bookmark .additional { white-space: normal; }
+#bookmarks ul li div.bookmark .additional .tags .label { margin-bottom: 3px; }
+#bookmarks ul li div.bookmark .additional .tags .label.tag { background-color: #a51; color: #fff; -webkit-border-radius: 1000px; border-radius: 1000px; }
+#bookmarks ul li div.bookmark .additional .tags .label.tag.private { background-color: #855936; color: #FFF; }
+#bookmarks ul li div.bookmark .additional .tags .label.private { background-color: #5c8c9a; color: #FFF; }
+#bookmarks ul li div.bookmark:hover { background-color: #F1F7FF; border-color: #B6D4FC; }
+#bookmarks ul li div.bookmark:hover .url { visibility: visible; }
+#bookmarks ul li div.bookmark.selected { background-color: #DEECFE; border-color: #7DA2CE; cursor: default; }
+#bookmarks ul li div.bookmark.selected .url { visibility: visible; }
+#bookmarks ul li div.bookmark.selected .additional { display: block; }
