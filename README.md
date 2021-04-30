@@ -69,3 +69,4 @@ These are things that might cause issues but I haven't tested them yet.
 - Tag with just one character x
 - Tag beginning or ending in a slash(es) ~Alpha/ ~/Alpha
 - Tag with multiple slashes (~Alpha/////Bravo)
+
